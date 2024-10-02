@@ -1,5 +1,5 @@
 <?php class Cercle extends Coloreador implements FiguraGeometrica{
-    public function __construct(protected ?string $color = null, private float $radi = 0){
+    public function __construct(private ?string $color = null, private float $radi = 0){
         parent::__construct($color);
     }
     public function calculaArea() : float{
