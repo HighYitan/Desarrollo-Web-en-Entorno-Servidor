@@ -5,13 +5,15 @@
             if(file_exists($fitxer)){
                 //$file = fopen("C:/temp/config.db", "r");
                 $linies = file($fitxer, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                $map = [];
                 foreach($linies as $linia){
                     if(!(str_starts_with($linia, "#"))){
                         echo $linia;
-                        $map = array_map('trim', explode("=", $linia));
-                        return $map;
+                        list($key, $value) = array_map("trim", explode("=", $linia, 2));
+                        $map = array($key => $value);
                     }
                 }
+                return $map;
                 /*while(! feof($file)) {
                     $line = fgets($file);
                     if(!(str_starts_with($line, "#"))){
