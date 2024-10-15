@@ -1,5 +1,28 @@
 <?php
-    require_once("./config/Database.php");
+    require_once __DIR__ . "/config/Database.php"; // Incloure l'arxiu de configuració i carregar la classe 'Config'
+
+    use Config\Database;
+
+    const CONFIG_FILE = "C:/temp/config.db"; // Definim la ruta del fitxer de configuració
+    try{
+        $config = Database::loadConfig(CONFIG_FILE); // Carreguem les variables de configuració
+        // Mostrem l'array de configuració
+        echo "<pre>";
+        print_r($config); // en comptes d'un foreach, també 'var_dump'
+        echo "</pre>";
+    }
+    catch(Error $e){
+        echo "Error: " . $e->getMessage();
+    }
+    catch(Exception $e){
+        echo "Exception: " . $e->getMessage();
+    }
+    finally{
+
+    }
+
+
+    /*require_once("./config/Database.php");
     const HOST = "localhost";
     const DBNAME = "HR";
     const USERNAME = "root";
@@ -32,5 +55,5 @@
         catch(mysqli_sql_exception $e){
 
         }
-    }
+    }*/
 ?>
