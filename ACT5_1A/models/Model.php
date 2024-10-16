@@ -17,7 +17,7 @@
                 $db->dbConnect(); // Realitzar la connexió a la base de dades
                 $table = static::$table; // Obtenir el nom de la taula de la classe filla
                 $sql = "SELECT * FROM $table";
-                $result = $db->conn->query($sql); // Executar la consulta
+                $result = $db->getConn()->query($sql); // Executar la consulta
                 if($result->num_rows > 0){ // Comprovar si hi ha resultats
                     $rows = [];
                     while($row = $result->fetch_assoc()){

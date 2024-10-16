@@ -2,7 +2,7 @@
     namespace Config;
 
     class Database{
-        private $host, $port, $database, $username, $password, $conn; 
+        public $host, $port, $database, $username, $password, $conn; 
         public function __construct($host, $port, $database, $username, $password){ // Constructor que utilitza el mètode 'loadConfig' per carregar les dades de configuració
             $this->host = $host;
             $this->port = $port;
@@ -79,6 +79,9 @@
                 $this->conn->close();
                 echo "Connexió a la base de dades tancada.<br>";
             }
+        }
+        public function getConn(){
+            return $this->conn;
         }
     }
 ?>
