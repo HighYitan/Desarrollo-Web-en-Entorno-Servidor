@@ -6,7 +6,7 @@
     abstract class Model{
         public static function All(){ // 'select()' Mètode per obtenir totes les files de la taula
             try{
-                $config = Database::loadConfig('C:/temp/config.db'); // Carregar la connexió a la base de dades
+                $config = Database::loadConfig("C:/temp/config.db"); // Carregar la connexió a la base de dades
                 $db = new Database(
                     $config["DB_HOST"],
                     $config["DB_PORT"],

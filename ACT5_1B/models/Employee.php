@@ -15,4 +15,29 @@
                                     private ?int $manager_id = null,
                                     private ?int $department_id = null){}
     }
+    public function save(){
+        try{
+            $config = Database::loadConfig("C:/temp/config.db");
+            $db = new Database(
+                $config["DB_HOST"],
+                $config["DB_PORT"],
+                $config["DB_DATABASE"],
+                $config["DB_USERNAME"],
+                $config["DB_PASSWORD"]
+            );
+            $db->dbConnect();
+            $table = static::$table;
+            $sql = "INSERT";
+            $result = $db->getConn()->save($sql);
+        }
+        catch(Error $e){
+            echo "Error: " . $e->getMessage();
+        }
+        catch(Exception $e){
+            echo "Exception: " . $e->getMessage();
+        }
+        finally{
+            $db->dbClose();
+        }
+    }
 ?>
