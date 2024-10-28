@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Dashboard</title>
+		<link rel="stylesheet" href="estils.css">
+		<title>Human Resource</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -24,14 +25,35 @@
 		</script>
 	</head>
 	<body>
-		<div class="wrapper">
-			<div class="container-fluid">
-			<div class="row">
-			<div class="col-md-12">
-			<div class="mt-5 mb-3 clearfix">
-				<h2 class="pull-left">Employees Details</h2>
-				<a href="create.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Employee</a>
+		<div id="header">
+			<h1>HR & OE Management</h1>
+		</div>
+		<div id="content">
+			<div id="menu">
+				<ul>
+					<li><a href="index.php">Home</a></li>
+					<li>
+						<ul> HR
+							<li><a href="employees.php">Employees</a></li>
+							<li><a href="departments.php">Departments</a></li>
+							<li><a href="jobs.php">Jobs</a></li>
+							<li><a href="locations.php">Locations</a></li>
+						</ul>
+					</li>
+					<li>
+						<ul> OE
+							<li><a href="warehouses.php">Warehouses</a></li>
+							<li><a href="categories.php">Categories</a></li>
+							<li><a href="customers.php">Customers</a></li>
+							<li><a href="products.php">Products</a></li>
+							<li><a href="orders.php">Orders</a></li>
+						</ul>
+					</li>
+				</ul>
 			</div>
+
+			<div id="section">
+			<h3>Employees</h3>
 			<?php
 				// Include config file
 				require_once "config.php";
@@ -43,20 +65,24 @@
 					mysqli_autocommit($conn, true);
 					
 					// Attempt select query execution
-					$query = "SELECT employee_id, first_name, last_name, department_name FROM departments d, employees e WHERE d.department_id = e.employee_id ORDER BY 1";
+					$query = "SELECT employee_id, first_name, last_name, department_name 
+								FROM departments d INNER JOIN employees e ON d.department_id = e.department_id 
+								ORDER BY employee_id";
 					$table = mysqli_query($conn, $query);
 					if (mysqli_num_rows($table) > 0) {
 						echo '<table class="table table-bordered table-striped">';
-							echo 
-								"<thead>" .
-									"<tr>" . 
-										"<th>#</th>"          .
-										"<th>Last Name</th>"  .
-										"<th>First Name</th>" .
-										"<th>Department</th>" .
-										"<th>Action</th>"     .
-									"</tr>" .
-								"</thead>";
+						echo 
+							"<thead>" .
+								"<tr>" . 
+									"<th>#</th>"          .
+									"<th>Last Name</th>"  .
+									"<th>First Name</th>" .
+									"<th>Department</th>" .
+									"<th>Actions "     .
+									'<a href="employee_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
+									"</th>" .
+								"</tr>" .
+							"</thead>";
 							echo "<tbody>";
 								while(null !== ($row = mysqli_fetch_array($table))) {
 									echo 
@@ -66,22 +92,21 @@
 											"<td>" . $row['first_name']      . "</td>" .
 											"<td>" . $row['department_name'] . "</td>" .
 											"<td>" .
-												'<a href="read.php?id='   . $row['employee_id'] . '" class="mr-3" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
-												'<a href="update.php?id=' . $row['employee_id'] . '" class="mr-3" title="Update Record" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
-												'<a href="delete.php?id=' . $row['employee_id'] . '" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'               .
+												'<a href="employee_read.php?id='   . $row['employee_id'] . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
+												'<a href="employee_update.php?id=' . $row['employee_id'] . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
+												'<a href="employee_delete.php?id=' . $row['employee_id'] . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'               .
 											"</td>" .
 										"</tr>";
 								}
-							echo "</tbody>";                            
+						echo "</tbody>"; 
 						echo "</table>";
-							
 						// Free result set
 						mysqli_free_result($table);
-					} else{
+					} else {
 						echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
 					}
 				} catch (mysqli_sql_exception $e) {
-					echo  "</p>" . $e-> getMessage() . "</p>";
+					echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
 				} catch (Exception $e) {
 					echo "</p>" . $e-> getMessage() . "</p>";
 				} catch (Error $e) {
@@ -97,8 +122,11 @@
 				}
 			?>
 			</div>
-			</div>        
-			</div>
+		</div>
+
+		<div id="footer">
+            <p>(c) IES Emili Darder - 2022</p>
 		</div>
 	</body>
 </html>
+

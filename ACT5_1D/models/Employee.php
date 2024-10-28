@@ -17,12 +17,16 @@ class Employee extends Model{
         private ?int $department_id = null
     ){}
     public function save() : void{ // Mètode per guardar l'empleat a la base de dades
-        error_reporting(E_ALL);
         try{
-            $db = new Database();
-            $db->dbConnect("C:/temp/config.db"); // Realitzar la connexió a la base de dades - Carregar la connexió a la base de dades
-            //$db->conn->autocommit(false);
-			//$db->conn->begin_transaction();
+            $config = Database::loadConfig("C:/temp/config.db");
+            $db = new Database(
+                $config["DB_HOST"],
+                $config["DB_PORT"],
+                $config["DB_DATABASE"],
+                $config["DB_USERNAME"],
+                $config["DB_PASSWORD"]
+            );
+            $db->dbConnect(); // Connectar a la base de dades
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta d'INSERT
             if (isset($this->employee_id)) {
@@ -55,7 +59,8 @@ class Employee extends Model{
                                         $this->manager_id, 
                                         $this->department_id
 				);
-                if ($stmt->execute()) { // Executar la consulta
+                			// Executar la consulta
+                if ($stmt->execute()) {
                     echo "L'empleat s'ha afegit/modificat correctament.";
                 } 
                 else {
@@ -63,38 +68,39 @@ class Employee extends Model{
                 }
             }
             else {
-                throw new \Exception ("ID empleat no informat.");
+                echo "Error, ID no informat";
             }
-            $db->getConn()->commit();
         }
-        catch(\mysqli_sql_exception $e){
-            if ($db->conn)
-                $db->getConn()->rollback(); 
-            throw new \mysqli_sql_exception($e->getMessage());
+        catch(Error $e){
+            echo "Error: " . $e->getMessage();
+        }
+        catch(Exception $e){
+            echo "Exception: " . $e->getMessage();
         }
         finally{
-            if($db->getConn()){
-                $db->dbClose(); // Tancar la connexió
-            }
+            $db->dbClose(); // Tancar la connexió
         }
     }
     public function destroy() : void{ // Mètode per eliminar l'empleat a la base de dades
-        error_reporting(E_ALL);
         try{
-            $db = new Database();
-            $db->dbConnect("C:/temp/config.db"); // Realitzar la connexió a la base de dades - Carregar la connexió a la base de dades
-            //$db->conn->autocommit(false);
-			//$db->conn->begin_transaction();
+            $config = Database::loadConfig("C:/temp/config.db"); // Carregar la configuració de la base de dades
+            $db = new Database(
+                $config["DB_HOST"],
+                $config["DB_PORT"],
+                $config["DB_DATABASE"],
+                $config["DB_USERNAME"],
+                $config["DB_PASSWORD"]
+            );
+            $db->dbConnect(); // Connectar a la base de dades
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta del delete
             if (isset($this->employee_id)) {
                 $sql = "SELECT * FROM $table WHERE employee_id = $this->employee_id";
                 $result = $db->getConn()->query($sql);
-                if($result->num_rows == 1){ // Comprovar si hi ha resultats
-                    $sql = "DELETE FROM $table
-                            WHERE employee_id = ?";
+                if($result->num_rows == 1){
+                    $sql = "DELETE FROM $table WHERE employee_id = ?";
                     $stmt = $db->getConn()->prepare($sql);
-                    $stmt->bind_param("i", $this->employee_id); // Vincular els valors
+                    $stmt->bind_param("i", $this->employee_id);
                     // Executar la consulta
                     if ($stmt->execute()) {
                         echo "L'empleat s'ha eliminat correctament.";
@@ -104,26 +110,21 @@ class Employee extends Model{
                     }
                 }
                 else{
-                    throw new \Exception ("L'empleat no existeix.");
+                    echo "L'empleat no existeix.";
                 }
             }
             else {
-                throw new \Exception ("ID empleat no informat.");
+                echo "Error, ID no informat";
             }
-            $db->getConn()->commit();
         }
-        catch(\mysqli_sql_exception $e){
-            if ($db->conn)
-                $db->conn->rollback(); 
-            throw new \mysqli_sql_exception($e->getMessage());
+        catch(Error $e){
+            echo "Error: " . $e->getMessage();
         }
         catch(Exception $e){
             echo "Exception: " . $e->getMessage();
         }
         finally{
-            if($db->getConn()){
-                $db->dbClose(); // Tancar la connexió
-            }
+            $db->dbClose(); // Tancar la connexió
         }
     }
 }

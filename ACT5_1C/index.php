@@ -27,7 +27,7 @@
         60
     );
     // Guardar l'empleat a la base de dades
-    $employee->save();  // INSERT
+    $employee->save();  // INSERT / UPDATE
     $employees = Employee::all(); //SELECT
     echo "<pre>";
     print_r($employees);
