@@ -14,7 +14,7 @@ class Employee extends Model{
         private ?float $salary = null,
         private ?float $commission_pct = null,
         private ?int $manager_id = null,
-        private ?int $department_id = null
+        private ?int $department_id = null,
     ){}
     public function save() : void{ // Mètode per guardar l'empleat a la base de dades
         error_reporting(E_ALL);
@@ -125,6 +125,39 @@ class Employee extends Model{
                 $db->dbClose(); // Tancar la connexió
             }
         }
+    }
+    public function getEmployeeId(){
+        return $this->employee_id;
+    }
+    public function getFirstName(){
+        return $this->first_name;
+    }
+    public function getLastName(){
+        return $this->last_name;
+    }
+    public function getEmail(){
+        return $this->email;
+    }
+    public function getPhoneNumber(){
+        return $this->phone_number;
+    }
+    public function getHireDate(){
+        return $this->hire_date;
+    }
+    public function getJobId(){
+        return $this->job_id;
+    }
+    public function getSalary(){
+        return $this->salary;
+    }
+    public function getCommisionPct(){
+        return $this->commision_pct;
+    }
+    public function getManagerId(){
+        return $this->manager_id;
+    }
+    public function getDepartmentId(){
+        return $this->department_id;
     }
 }
 ?>

@@ -57,6 +57,12 @@
 			<?php
 				// Include config file
 				require_once "config.php";
+				require "../vendor/autoload.php";
+				use config\Database;
+				use models\Employee;
+				use models\Department;
+				use models\Customer;
+				$employees = Employee::All();
 				$conn = null;
 				
 				try {
