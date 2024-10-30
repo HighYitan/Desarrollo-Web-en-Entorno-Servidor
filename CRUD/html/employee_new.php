@@ -1,20 +1,26 @@
 <?php
 	// Include config file
-	require_once "config.php";
+	//require_once "config.php";
+	require "../vendor/autoload.php";
+	use config\Database;
+	use models\Employee;
+	use models\Department;
+	use models\Customer;
+	use models\Job;
 	$conn = null;
-	$p_ID = $p_last_name = $p_first_name = "";
-	$p_department = 80;
-	$p_job_id = 'IT_PROG';
-	$p_salary = "1";
+	$employee_id = $last_name = $first_name = "";
+	$department_id = 80;
+	$job_id = 'IT_PROG';
+	$salary = "1";
 	$text_err = "Please enter a text.";
 	
 	try {
 		if($_SERVER["REQUEST_METHOD"] == "POST"){
-			$p_ID = trim($_POST["id"]);
-			$p_last_name = trim($_POST["last_name"]);
-			$p_first_name = trim($_POST["first_name"]);
-			$p_job_id = trim($_POST["job_id"]);
-			$p_salary = trim($_POST["salary"]);
+			$employee_id = trim($_POST["id"]);
+			$last_name = trim($_POST["last_name"]);
+			$first_name = trim($_POST["first_name"]);
+			$job_id = trim($_POST["job_id"]);
+			$salary = trim($_POST["salary"]);
 			
 			/* Attempt to connect to MySQL database */
 			$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -22,8 +28,21 @@
 			
 			// Attempt select query execution
 			$query = "INSERT INTO employees ( employee_id, first_name, last_name, job_id, department_id, salary )
-					  VALUES( " . $p_ID . ", '" . $p_first_name ."','" . $p_last_name ."','" . $p_job_id . "'," . $p_department . "," . $p_salary .")";
+					  VALUES( " . $employee_id . ", '" . $first_name ."','" . $last_name ."','" . $job_id . "'," . $department_id . "," . $salary .")";
 			$table = mysqli_query($conn, $query);
+			$employee = new Employee(
+				$employee_id,
+				$first_name,
+				$last_name,
+				null,
+				null,
+				null,
+				$job_id,
+				$salary,
+				null,
+				null,
+				null
+			);
 			// mysqli_commit($conn);
 
 		}
@@ -50,7 +69,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link rel="stylesheet" href="estils.css">
+		<link rel="stylesheet" href="../css/estils.css">
 		<title>Human Resource</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -62,13 +81,40 @@
 				width: 600px;
 				margin: 0 auto;
 			}
-			table tr td:last-child{
+			/*table tr td:last-child{
 				width: 120px;
-			}
+			}*/
 		</style>
 		<script>
 			$(document).ready(function(){
 				$('[data-toggle="tooltip"]').tooltip();   
+			});
+			var mealsByCategory = {
+				A: ["Soup", "Juice", "Tea", "Others"],
+				B: ["Soup", "Juice", "Water", "Others"],
+				C: ["Soup", "Juice", "Coffee", "Tea", "Others"]
+			}
+			const menuEl = document.querySelector('.menu');
+			const selectEl1 = document.querySelector('#meal');
+			const selectEl2 = document.querySelector('#category')
+
+			selectEl1.addEventListener('change', event => {
+				const meals = mealsByCategory[selectEl1.value]
+
+				// clear the content of the second select and populate it with new options
+				selectEl2.innerHTML = '';
+				meals.forEach(item => {
+					const option = document.createElement('option');
+					selectEl2.appendChild(option);
+					option.textContent = item;
+				});
+			});
+
+			selectEl2.addEventListener('change', event => {
+				if (selectEl1.value === 'A' && selectEl2.value === 'Tea') {
+					document.querySelector('.menu1').style.display = 'none';
+					document.querySelector('.menu2').style.display = 'block';
+				}
 			});
 		</script>
 	</head>
@@ -106,33 +152,91 @@
 				<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group">
                             <label>ID</label>
-                            <input type="text" name="id" class="form-control " value="<?php echo $p_ID; ?>">
+                            <input type="text" name="id" class="form-control " value="<?php echo $employee_id; ?>">
                             <span class="invalid-feedback"><?php echo $text_err;?></span>
                         </div>
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" name="first_name" class="form-control " value="<?php echo $p_first_name; ?>">
+                            <input type="text" name="first_name" class="form-control " value="<?php echo $first_name; ?>">
                             <span class="invalid-feedback"><?php echo $text_err;?></span>
                         </div>
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" name="last_name" class="form-control " value="<?php echo $p_last_name; ?>">
+                            <input type="text" name="last_name" class="form-control " value="<?php echo $last_name; ?>">
                             <span class="invalid-feedback"><?php echo $text_err;?></span>
                         </div>
                         <div class="form-group">
                             <label>Job ID</label>
-                            <input type="text" name="job_id" class="form-control " value="<?php echo $p_job_id; ?>">
+                            <input type="text" name="job_id" class="form-control " value="<?php echo $job_id; ?>">
                             <span class="invalid-feedback"><?php echo $text_err;?></span>
                         </div>
 						<div class="form-group">
                             <label>Salary</label>
-                            <input type="text" name="salary" class="form-control " value="<?php echo $p_salary; ?>">
+                            <input type="text" name="salary" class="form-control " value="<?php echo $salary; ?>">
                             <span class="invalid-feedback"><?php echo $text_err;?></span>
                         </div>
                         <input type="submit" class="btn btn-primary" value="Submit">
                         <a href="employees.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
+					<select name="select" id="select" onChange="">
+						<option value="job">Job</option>
+						<option value="department">Department</option>
+						<option value="manager_id">Manager id</option>
+					</select>
+					<?php
+					$jobs = Job::All();
+					echo "<select name="select" id="select" onChange="">";
+					foreach($jobs as $job){
+						echo "<option value=" . $job->getJobId() . ">" . $job->getJobTitle() . "</option>";
+					}
+					echo "</select>";
 
+
+					try {
+						echo '<table class="table table-bordered table-striped">';
+						echo 
+							"<thead>" .
+								"<tr>" . 
+									"<th>ID</th>"          .
+									"<th>Title</th>"  .
+									"<th>Minimum Salary</th>" .
+									"<th>Maximum Salary</th>" .
+								"</tr>" .
+							"</thead>";
+							echo "<tbody>";
+							foreach($jobs as $job){
+								echo 
+								"<tr>" . 
+									"<td>" . $job->getJobId()    . "</td>" .
+									"<td>" . $job->getJobTitle()       . "</td>" .
+									"<td>" . $job->getMinSalary()      . "</td>" .
+									"<td>" . $job->getMaxSalary() . "</td>" .
+								"</tr>";
+							}
+						echo "</tbody>"; 
+						echo "</table>";
+					}
+					catch (mysqli_sql_exception $e) {
+						echo  "<p> ERROR:" . $e-> getMessage() . "</p>";
+					}
+					catch (Exception $e) {
+						echo "<p>" . $e-> getMessage() . "</p>";
+					}
+					catch (Error $e) {
+						echo "<p>" . $e-> getMessage() . "</p>";
+					}
+					finally {
+						try {
+							mysqli_close($conn);
+						}
+						catch (Exception $e) {
+							// Nothing to do
+						}
+						catch (Error $e) {
+							// Nothing to do
+						}
+					}
+					?>
 			</div>
 		</div>
 

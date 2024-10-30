@@ -9,5 +9,17 @@ class Department extends Model{
         private ?int $manager_id = null,
         private ?int $location_id = null,
     ){}
+    public function getDepartmentId() : int{
+        return $this->department_id;
+    }
+    public function getDepartmentName() : ?string{
+        return $this->department_name;
+    }
+    public function getManagerId() : ?int{
+        return $this->manager_id;
+    }
+    public function getLocationId() : ?int{
+        return $this->location_id;
+    }
 }
 ?>

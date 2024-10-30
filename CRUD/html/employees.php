@@ -53,8 +53,8 @@
 			</div>
 
 			<div id="section">
-			<h3>Employees</h3>
-			<?php
+				<h3>Employees</h3>
+				<?php
 				// Include config file
 				//require_once "../src/config/config.php";
 				require "../vendor/autoload.php";
@@ -147,7 +147,7 @@
 						// Nothing to do
 					}
 				}
-			?>
+				?>
 			</div>
 		</div>
 
