@@ -13,6 +13,8 @@
 	$job_id = 'IT_PROG';
 	$salary = "1";
 	$text_err = "Please enter a text.";
+	$email = "email@gmail.com";
+	$phone = "123456789";
 	
 	try {
 		if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -21,21 +23,22 @@
 			$first_name = trim($_POST["first_name"]);
 			$job_id = trim($_POST["job_id"]);
 			$salary = trim($_POST["salary"]);
-			
+			$email = trim($_POST["email"]);
+			$phone = trim($_POST["phone"]);
 			/* Attempt to connect to MySQL database */
-			$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+			/*$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 			mysqli_autocommit($conn, true);
 			
 			// Attempt select query execution
 			$query = "INSERT INTO employees ( employee_id, first_name, last_name, job_id, department_id, salary )
 					  VALUES( " . $employee_id . ", '" . $first_name ."','" . $last_name ."','" . $job_id . "'," . $department_id . "," . $salary .")";
-			$table = mysqli_query($conn, $query);
+			$table = mysqli_query($conn, $query);*/
 			$employee = new Employee(
 				$employee_id,
 				$first_name,
 				$last_name,
-				null,
-				null,
+				$email,
+				$phone,
 				null,
 				$job_id,
 				$salary,
@@ -44,7 +47,7 @@
 				null
 			);
 			// mysqli_commit($conn);
-
+			$employee->save();
 		}
 	} catch (mysqli_sql_exception $e) {
 		echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
@@ -89,33 +92,6 @@
 			$(document).ready(function(){
 				$('[data-toggle="tooltip"]').tooltip();   
 			});
-			var mealsByCategory = {
-				A: ["Soup", "Juice", "Tea", "Others"],
-				B: ["Soup", "Juice", "Water", "Others"],
-				C: ["Soup", "Juice", "Coffee", "Tea", "Others"]
-			}
-			const menuEl = document.querySelector('.menu');
-			const selectEl1 = document.querySelector('#meal');
-			const selectEl2 = document.querySelector('#category')
-
-			selectEl1.addEventListener('change', event => {
-				const meals = mealsByCategory[selectEl1.value]
-
-				// clear the content of the second select and populate it with new options
-				selectEl2.innerHTML = '';
-				meals.forEach(item => {
-					const option = document.createElement('option');
-					selectEl2.appendChild(option);
-					option.textContent = item;
-				});
-			});
-
-			selectEl2.addEventListener('change', event => {
-				if (selectEl1.value === 'A' && selectEl2.value === 'Tea') {
-					document.querySelector('.menu1').style.display = 'none';
-					document.querySelector('.menu2').style.display = 'block';
-				}
-			});
 		</script>
 	</head>
 	<body>
@@ -150,93 +126,61 @@
 				<h3>Employees</h3>
 			
 				<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="form-group">
-                            <label>ID</label>
-                            <input type="text" name="id" class="form-control " value="<?php echo $employee_id; ?>">
-                            <span class="invalid-feedback"><?php echo $text_err;?></span>
-                        </div>
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" name="first_name" class="form-control " value="<?php echo $first_name; ?>">
-                            <span class="invalid-feedback"><?php echo $text_err;?></span>
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" name="last_name" class="form-control " value="<?php echo $last_name; ?>">
-                            <span class="invalid-feedback"><?php echo $text_err;?></span>
-                        </div>
-                        <div class="form-group">
-                            <label>Job ID</label>
-                            <input type="text" name="job_id" class="form-control " value="<?php echo $job_id; ?>">
-                            <span class="invalid-feedback"><?php echo $text_err;?></span>
-                        </div>
-						<div class="form-group">
-                            <label>Salary</label>
-                            <input type="text" name="salary" class="form-control " value="<?php echo $salary; ?>">
-                            <span class="invalid-feedback"><?php echo $text_err;?></span>
-                        </div>
-                        <input type="submit" class="btn btn-primary" value="Submit">
-                        <a href="employees.php" class="btn btn-secondary ml-2">Cancel</a>
-                    </form>
-					<select name="select" id="select" onChange="">
-						<option value="job">Job</option>
-						<option value="department">Department</option>
-						<option value="manager_id">Manager id</option>
-					</select>
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="text" name="id" class="form-control" value="<?php echo $employee_id; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" class="form-control" value="<?php echo $first_name; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" class="form-control" value="<?php echo $last_name; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+					<div class="form-group">
+                        <label>Email</label>
+                        <input type="text" name="email" class="form-control" value="<?php echo $email; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+					<div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" class="form-control" value="<?php echo $phone; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+                    <!--<div class="form-group">
+                        <label>Job ID</label>
+                        <input type="text" name="job_id" class="form-control " value="<?php echo $job_id; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>-->
 					<?php
 					$jobs = Job::All();
-					echo "<select name="select" id="select" onChange="">";
-					foreach($jobs as $job){
-						echo "<option value=" . $job->getJobId() . ">" . $job->getJobTitle() . "</option>";
-					}
-					echo "</select>";
-
-
-					try {
-						echo '<table class="table table-bordered table-striped">';
-						echo 
-							"<thead>" .
-								"<tr>" . 
-									"<th>ID</th>"          .
-									"<th>Title</th>"  .
-									"<th>Minimum Salary</th>" .
-									"<th>Maximum Salary</th>" .
-								"</tr>" .
-							"</thead>";
-							echo "<tbody>";
-							foreach($jobs as $job){
-								echo 
-								"<tr>" . 
-									"<td>" . $job->getJobId()    . "</td>" .
-									"<td>" . $job->getJobTitle()       . "</td>" .
-									"<td>" . $job->getMinSalary()      . "</td>" .
-									"<td>" . $job->getMaxSalary() . "</td>" .
-								"</tr>";
-							}
-						echo "</tbody>"; 
-						echo "</table>";
-					}
-					catch (mysqli_sql_exception $e) {
-						echo  "<p> ERROR:" . $e-> getMessage() . "</p>";
-					}
-					catch (Exception $e) {
-						echo "<p>" . $e-> getMessage() . "</p>";
-					}
-					catch (Error $e) {
-						echo "<p>" . $e-> getMessage() . "</p>";
-					}
-					finally {
-						try {
-							mysqli_close($conn);
+					echo "<div class=form-group>";
+						echo "<label>Job</label>";
+						echo "<select name=job_id id=job_id class=form-control onChange=>";
+						foreach($jobs as $job){
+							echo "<option value=" . $job->getJobId() . ">" . $job->getJobTitle() . "</option>";
 						}
-						catch (Exception $e) {
-							// Nothing to do
-						}
-						catch (Error $e) {
-							// Nothing to do
-						}
-					}
+						echo "</select>";
+					echo "</div>";
+					//$employee->save();
 					?>
+					<div class="form-group">
+                        <label>Salary</label>
+                        <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
+                        <span class="invalid-feedback"><?php echo $text_err;?></span>
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <a href="employees.php" class="btn btn-secondary ml-2">Cancel</a>
+                </form>
+				<select name="select" id="select" onChange="">
+					<option value="job">Job</option>
+					<option value="department">Department</option>
+					<option value="manager_id">Manager id</option>
+				</select>
 			</div>
 		</div>
 

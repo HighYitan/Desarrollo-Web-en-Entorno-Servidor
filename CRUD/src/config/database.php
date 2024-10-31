@@ -41,12 +41,12 @@ class Database{
         if ($this->conn->connect_error) { // Comprovem si hi ha errors en la connexió
             die("Error en la connexió: " . $this->conn->connect_error);
         }
-        echo "Connexió a la base de dades correcta.<br>";
+        //echo "Connexió a la base de dades correcta.<br>";
     }
     public function dbClose() : void{ // Mètode per tancar la connexió a la base de dades
         if($this->conn){
             $this->conn->close();
-            echo "Connexió a la base de dades tancada.<br>";
+            //echo "Connexió a la base de dades tancada.<br>";
         }
     }
     public function getConn(){
