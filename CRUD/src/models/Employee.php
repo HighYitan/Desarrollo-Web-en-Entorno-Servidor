@@ -14,7 +14,7 @@ class Employee extends Model{
         private ?float $salary = null,
         private ?float $commission_pct = null,
         private ?int $manager_id = null,
-        private ?int $department_id = null,
+        private ?int $department_id = null
     ){}
     public function save() : void{ // Mètode per guardar l'empleat a la base de dades
         error_reporting(E_ALL);
@@ -55,12 +55,7 @@ class Employee extends Model{
                                         $this->manager_id, 
                                         $this->department_id
 				);
-                if ($stmt->execute()) { // Executar la consulta
-                    echo "L'empleat s'ha afegit/modificat correctament.";
-                } 
-                else {
-                    echo "Error en afegir/modificar l'empleat: " . $stmt->error;
-                }
+                $stmt->execute();// Executar la consulta
             }
             else {
                 throw new \Exception ("ID empleat no informat.");
@@ -68,7 +63,7 @@ class Employee extends Model{
             $db->getConn()->commit();
         }
         catch(\mysqli_sql_exception $e){
-            if ($db->conn)
+            if ($db->getConn())
                 $db->getConn()->rollback(); 
             throw new \mysqli_sql_exception($e->getMessage());
         }
@@ -95,13 +90,7 @@ class Employee extends Model{
                             WHERE employee_id = ?";
                     $stmt = $db->getConn()->prepare($sql);
                     $stmt->bind_param("i", $this->employee_id); // Vincular els valors
-                    // Executar la consulta
-                    if ($stmt->execute()) {
-                        echo "L'empleat s'ha eliminat correctament.";
-                    } 
-                    else {
-                        echo "Error en eliminar l'empleat: " . $stmt->error;
-                    }
+                    $stmt->execute();// Executar la consulta
                 }
                 else{
                     throw new \Exception ("L'empleat no existeix.");
@@ -151,7 +140,7 @@ class Employee extends Model{
         return $this->salary;
     }
     public function getCommisionPct(){
-        return $this->commision_pct;
+        return $this->commission_pct;
     }
     public function getManagerId(){
         return $this->manager_id;
