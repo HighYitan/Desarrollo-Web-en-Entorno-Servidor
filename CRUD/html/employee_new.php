@@ -207,6 +207,7 @@ try {
 							foreach($managers as $manager){
 								echo "<option value=" . $manager->getEmployeeId() . ">" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
 							}
+							echo "<option value=" . 0 . ">" . "No manager" . "</option>";
 							echo "</select>";
 						echo "</div>";
 						$departments = Department::All();

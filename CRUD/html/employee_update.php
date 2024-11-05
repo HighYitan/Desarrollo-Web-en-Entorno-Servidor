@@ -241,6 +241,9 @@ try {
 							if($manager_id == null){
 								echo "<option value=" . 0 . " selected>" . "No manager" . "</option>";
 							}
+							else{
+								echo "<option value=" . 0 . ">" . "No manager" . "</option>";
+							}
 							echo "</select>";
 						echo "</div>";
 						$departments = Department::All();
