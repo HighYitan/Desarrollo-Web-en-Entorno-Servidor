@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="../css/estils.css">
-		<title>Customers List</title>
+		<title>Delete Customer</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -61,8 +61,8 @@
 					</div>
 				</div>
 
-				<div class="col-md-10 table-responsive">
-					<h3>Customers</h3>
+				<div class="col-md-10 table-responsive"> <!-- Con table-responsive nos saldrá la barra horizontal para mostrar todos los datos sin salirnos de la página por el lado -->
+					<h3>Delete Customer</h3>
 					<?php
 					session_start(); // si ja existeix sessió, associa la sessió a l'actual
 					ob_start();  // necessari per a la redirecció de 'header()': resetea el buffer de salida
@@ -76,8 +76,26 @@
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
                     use models\Customer;
+                    use models\Employee;
+	    			function getManagers($employees){ //Encuentra todos los employees que son managers
+	    				$managers = [];
+	    				foreach($employees as $employee1){//Comprueba si tiene jefe
+	    					foreach($employees as $employee2){//Comprueba si es jefe
+	    						if($employee1->getManagerId() == $employee2->getEmployeeId()){//Comprueba si employee2 es jefe de employee1
+	    							if(!in_array($employee2, $managers)){//Comprueba si ya está en la lista de managers
+	    								$managers[] = $employee2;//Se añade a la lista de managers
+	    							}
+	    						}
+	    					}
+	    				}
+	    				return $managers;
+	    			}
 					try {
-						$customers = Customer::All();
+                        $customers = Customer::All();
+                        $employees = Employee::All();
+                        $readCustomer;
+                        $managerName;
+                        $managers = getManagers($employees);
 						echo'<table class="table table-bordered table-dark table-striped">';
 						echo 
 							"<thead>" .
@@ -85,29 +103,69 @@
 									"<th>Customer ID</th>"          .
 									"<th>First Name</th>"  .
 									"<th>Last Name</th>" .
+                                    "<th>Address</th>" .
+                                    "<th>Postal Code</th>" .
+                                    "<th>City</th>" .
+                                    "<th>State</th>" .
+                                    "<th>Country</th>" .
 									"<th>Phone Number</th>" .
+                                    "<th>Language</th>" .
+                                    "<th>Territory</th>" .
+                                    "<th>Credit Limit</th>" .
                                     "<th>Email</th>" .
+                                    "<th>Manager</th>" .
+                                    "<th>Geolocation</th>" .
+                                    "<th>Date of Birth</th>" .
+                                    "<th>Marital Status</th>" .
+                                    "<th>Gender</th>" .
+                                    "<th>Income Level</th>" .
 									"<th>Actions "     .
 									'<a href="customer_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
 									"</th>" .
 								"</tr>" .
 							"</thead>";
 							echo "<tbody>";
-							foreach($customers as $customer){
-								echo 
-									"<tr>" . 
-										"<td>" . $customer->getCustomerId()    . "</td>" .
-										"<td>" . $customer->getCustFirstName()       . "</td>" .
-										"<td>" . $customer->getCustLastName()      . "</td>" .
-										"<td>" . $customer->getPhoneNumbers() . "</td>" .
-                                        "<td>" . $customer->getCustEmail() . "</td>" .
-										"<td>" .
-											'<a href="customer_read.php?id='   . $customer->getCustomerId() . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
-											'<a href="customer_update.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
-											'<a href="customer_delete.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'  .
-										"</td>" .
-									"</tr>";
-							}
+                            foreach($customers as $customer){
+	    						if($customer->getCustomerId() == $_GET["id"]){
+	    							$readCustomer = $customer;
+	    						}
+	    					}
+                            if($readCustomer->getAccountMgrId() != null){
+	    						foreach($managers as $manager){
+	    							if($manager->getEmployeeId() == $readCustomer->getAccountMgrId()){
+	    								$managerName = $manager->getFirstName() . " " . $manager->getLastName();
+	    							}
+	    						}
+	    					}
+	    					else{
+	    						$managerName = "No manager";
+	    					}
+							echo 
+								"<tr>" . 
+									"<td>" . $readCustomer->getCustomerId()     . "</td>" .
+									"<td>" . $readCustomer->getCustFirstName()  . "</td>" .
+									"<td>" . $readCustomer->getCustLastName()   . "</td>" .
+                                    "<td>" . $readCustomer->getCustStreetAddress()      . "</td>" .
+                                    "<td>" . $readCustomer->getCustPostalCode()     . "</td>" .
+                                    "<td>" . $readCustomer->getCustCity()      . "</td>" .
+                                    "<td>" . $readCustomer->getCustState()      . "</td>" .
+                                    "<td>" . $readCustomer->getCustCountry()      . "</td>" .
+									"<td>" . $readCustomer->getPhoneNumbers()   . "</td>" .
+                                    "<td>" . $readCustomer->getNlsLanguage()   . "</td>" .
+                                    "<td>" . $readCustomer->getNlsTerritory()   . "</td>" .
+                                    "<td>" . $readCustomer->getCreditLimit()   . "</td>" .
+                                    "<td>" . $readCustomer->getCustEmail()      . "</td>" .
+                                    "<td>" . $managerName      . "</td>" .
+                                    "<td>" . $readCustomer->getCustGeoLocation()      . "</td>" .
+                                    "<td>" . $readCustomer->getDateOfBirth()      . "</td>" .
+                                    "<td>" . $readCustomer->getMaritalStatus()      . "</td>" .
+                                    "<td>" . $readCustomer->getGender()      . "</td>" .
+                                    "<td>" . $readCustomer->getIncomeLevel()      . "</td>" .
+									"<td>" . 
+										'<a href="customer_update.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
+                                        '<a href="customer_delete.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'  .
+                                    "</td>" .
+								"</tr>";
 							echo "</tbody>"; 
 						echo "</table>";
 					}

@@ -10,37 +10,20 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use config\Database;
 use models\Employee;
-use models\Department;
-use models\Job;
 use models\Customer;
 use models\Country;
 use Faker\Factory;
 use Carbon\Carbon;
 
-$faker = Faker\Factory::create();
-$customer_id = $faker->numberBetween(1000, 9999);
-$cust_first_name = $faker->firstname();
-$cust_last_name = $faker->lastname();
-$cust_street_address = $faker->streetAddress();
-$cust_postal_code = $faker->postcode();
-$phone_number = $faker->phoneNumber();
-$credit_limit = $faker->randomFloat(1, 100, 5000);
-$cust_email = $faker->email();
-$geo_location = $faker->latitude() . ", " . $faker->longitude();
-$date_of_birth = $faker->date();
-$marital_status = $faker->randomElement(["single", "married"]);
-$gender = $faker->randomElement(["M", "F"]);
-$text_err = "Please enter a text.";
-
-$employees = Employee::All();
-$jobs = Job::All();
-$countries = Country::All();
-$customers = Customer::All();
-$managers = getManagers($employees);
-$incomes = getIncomeLevels($customers);
-$chosenCountry;
+function getCustomerById($customer_id, $customers){
+	foreach($customers as $customer){
+		if($customer->getCustomerId() == $customer_id){
+			return $customer;
+		}
+	}
+	return null;
+}
 function convertToNull($value) {
 	return $value == ("" OR 0) ? null : $value;
 }
@@ -66,13 +49,47 @@ function getIncomeLevels($customers){
 	return $incomes;
 }
 try {
+	if(isset($_POST["id"]) && !empty($_POST["id"])){//Sino customer_id se queda como undefined al terminar el formulario y da error.
+		$customer_id = $_POST["id"];
+	}
+	else{
+		if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+			$customer_id =  trim($_GET["id"]);
+		}
+	}
+	$employees = Employee::All();
+	$countries = Country::All();
+	$customers = Customer::All();
+	
+	$cust = getCustomerById($customer_id, $customers);
+	$cust_first_name = $cust->getCustFirstName();
+	$cust_last_name = $cust->getCustLastName();
+	$cust_street_address = $cust->getCustStreetAddress();
+	$cust_postal_code = $cust->getCustPostalCode();
+	$cust_city = $cust->getCustCity();
+	$cust_state = $cust->getCustState();
+	$country_id = $cust->getCustCountry();
+	$phone_number = $cust->getPhoneNumbers();
+	$credit_limit = $cust->getCreditLimit();
+	$cust_email = $cust->getCustEmail();
+	$account_mgr_id = $cust->getAccountMgrId();
+	$geo_location = json_decode($cust->getCustGeoLocation());
+	$date_of_birth = $cust->getDateOfBirth();
+	$marital_status = $cust->getMaritalStatus();
+	$gender = $cust->getGender();
+	$income_level = $cust->getIncomeLevel();
+	$text_err = "Please enter a text.";
+	
+	$managers = getManagers($employees);
+	$incomes = getIncomeLevels($customers);
+	$chosenCountry;
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
         foreach($countries as $country){
             if($country->getCountryId() == $_POST["cust_country"]){
                 $chosenCountry = $country;
             }
         }
-		$customer_id            = $_POST["id"];
+		$customer_id            = isset($_POST['id'])?$_POST['id']:"";
         $cust_first_name        = $_POST["cust_first_name"];
 		$cust_last_name         = $_POST["cust_last_name"];
         $cust_street_address    = $_POST["cust_street_address"];
@@ -116,23 +133,23 @@ try {
 		$newCustomer->save();
 		header("Location: customers.php");
 	}
-	} 
-	catch (mysqli_sql_exception $e) {
-		echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
-	} 
-	catch (Exception $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	} 
-	catch (Error $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	}
+} 
+catch (mysqli_sql_exception $e) {
+	echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
+} 
+catch (Exception $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+} 
+catch (Error $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="es-ES">
 	<head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="../css/estils.css">
-		<title>New Customer</title>
+		<title>Update Customer</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -191,12 +208,12 @@ try {
 				</div>
 
 				<div class="col-md-10">
-					<h3>New Customer</h3>
+					<h3>Update Customer</h3>
 				
 					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 						<div class="form-group">
 							<label class="form-label">Customer ID</label>
-							<input type="text" name="id" class="form-control" required value="<?php echo $customer_id; ?>">
+							<input type="text" name="id" class="form-control" required readonly value="<?php echo $customer_id; ?>">
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<div class="form-group">
@@ -221,12 +238,12 @@ try {
 						</div>
 						<div class="form-group">
 							<label class="form-label">City</label>
-							<input type="text" name="cust_city" class="form-control">
+							<input type="text" name="cust_city" class="form-control" value="<?php echo $cust_city; ?>">
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<div class="form-group">
 							<label class="form-label">State</label>
-							<input type="text" name="cust_state" class="form-control">
+							<input type="text" name="cust_state" class="form-control" value="<?php echo $cust_state; ?>">
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
                         <?php
@@ -234,7 +251,12 @@ try {
 							echo "<label class=form-label>Country</label>";
 							echo "<select name=cust_country id=cust_country class=form-select>";
 							foreach($countries as $country){
-								echo "<option value=" . $country->getCountryId() . ">" . $country->getCountryName() . "</option>";
+								if($country->getCountryId() == $country_id){
+									echo "<option value=" . $country_id . " selected>" . $country->getCountryName() . "</option>";
+								}
+								else{
+									echo "<option value=" . $country->getCountryId() . ">" . $country->getCountryName() . "</option>";
+								}
 							}
 							echo "</select>";
 						echo "</div>";
@@ -259,7 +281,12 @@ try {
 							echo "<label class=form-label>Manager</label>";
 							echo "<select name=manager_id id=manager_id class=form-select>";
 							foreach($managers as $manager){
-								echo "<option value=" . $manager->getEmployeeId() . ">" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
+								if($manager->getEmployeeId() == $account_mgr_id){
+									echo "<option value=" . $account_mgr_id . " selected>" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>"; //CAMBIAR POR COUNTRY_ID
+								}
+								else{
+									echo "<option value=" . $manager->getEmployeeId() . ">" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
+								}
 							}
 							echo "</select>";
 						echo "</div>";
@@ -305,7 +332,12 @@ try {
 							echo "<label class=form-label>Income Level</label>";
 							echo "<select name=income_level id=income_level class=form-select>";
 							foreach($incomes as $income){
-								echo "<option value='" . $income . "'>" . $income . "</option>";
+								if($income == $income_level){
+									echo "<option value='" . $income_level . "' selected>" . $income_level . "</option>"; //CAMBIAR POR COUNTRY_ID
+								}
+								else{
+									echo "<option value='" . $income . "'>" . $income . "</option>";
+								}
 							}
 							echo "</select>";
 						echo "</div>";

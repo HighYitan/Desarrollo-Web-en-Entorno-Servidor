@@ -61,7 +61,7 @@
 					</div>
 				</div>
 
-				<div class="col-md-10">
+				<div class="col-md-10 table-responsive">
 					<h3>Employees</h3>
 					<?php
 					session_start(); // si ja existeix sessió, associa la sessió a l'actual
@@ -75,13 +75,12 @@
 					}
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
-					use config\Database;
 					use models\Employee;
 					use models\Department;
-					$employees = Employee::All();
-					$departments = Department::All();
-					$deptName;
 					try {
+						$employees = Employee::All();
+						$departments = Department::All();
+						$deptName;
 						echo'<table class="table table-bordered table-dark table-striped">';
 						echo 
 							"<thead>" .

@@ -10,26 +10,12 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use config\Database;
 use models\Employee;
 use models\Department;
 use models\Job;
 use Faker\Factory;
 use Carbon\Carbon;
 
-$faker = Faker\Factory::create();
-$employee_id = $faker->numberBetween(1000, 9999);
-$first_name = $faker->firstname();
-$last_name = $faker->lastname();
-$email = $faker->email();
-$phone = $faker->phoneNumber();
-$hire_date = Carbon::now();
-$salary = $faker->numberBetween(5000, 40000);
-$commission = $faker->randomFloat(1, 0, 0.4);
-$text_err = "Please enter a text.";
-
-$employees = Employee::All();
-$managers = getManagers($employees);
 function convertToNull($value) {
 	return $value == ("" OR 0) ? null : $value;
 }
@@ -48,13 +34,34 @@ function getManagers($employees){
 	return $managers;
 }
 try {
+	$faker = Faker\Factory::create();
+	$employee_id = $faker->numberBetween(1000, 9999);
+	$first_name = $faker->firstname();
+	$last_name = $faker->lastname();
+	$email = $faker->email();
+	$phone = $faker->phoneNumber();
+	$hire_date = Carbon::now();
+	$salary = $faker->numberBetween(5000, 40000);
+	$commission = $faker->randomFloat(1, 0, 0.4);
+	$text_err = "Please enter a text.";
+
+	$employees = Employee::All();
+	$managers = getManagers($employees);
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
 		$employee_id = 		$_POST["id"];
 		$last_name = 		$_POST["last_name"];
 		$first_name = 		$_POST["first_name"];
 		$job_id = 			$_POST["job_id"];
 		$salary = 			$_POST["salary"];
-		$email = 			$_POST["email"];
+		foreach($employees as $employee){
+			if($employee->getEmail() == $_POST["email"]){
+				$email = null;
+				break;
+			}
+			else{
+				$email = 	$_POST["email"];
+			}
+		}
 		$phone = 			$_POST["phone"];
 		$commission = 		$_POST["commission"];
 		$manager_id = 		$_POST["manager_id"];
@@ -76,16 +83,16 @@ try {
 		$newEmployee->save();
 		header("Location: employees.php");
 	}
-	} 
-	catch (mysqli_sql_exception $e) {
-		echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
-	} 
-	catch (Exception $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	} 
-	catch (Error $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	}
+} 
+catch (mysqli_sql_exception $e) {
+	echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
+} 
+catch (Exception $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+} 
+catch (Error $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="es-ES">

@@ -10,37 +10,12 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use config\Database;
 use models\Employee;
-use models\Department;
-use models\Job;
 use models\Customer;
 use models\Country;
 use Faker\Factory;
 use Carbon\Carbon;
 
-$faker = Faker\Factory::create();
-$customer_id = $faker->numberBetween(1000, 9999);
-$cust_first_name = $faker->firstname();
-$cust_last_name = $faker->lastname();
-$cust_street_address = $faker->streetAddress();
-$cust_postal_code = $faker->postcode();
-$phone_number = $faker->phoneNumber();
-$credit_limit = $faker->randomFloat(1, 100, 5000);
-$cust_email = $faker->email();
-$geo_location = $faker->latitude() . ", " . $faker->longitude();
-$date_of_birth = $faker->date();
-$marital_status = $faker->randomElement(["single", "married"]);
-$gender = $faker->randomElement(["M", "F"]);
-$text_err = "Please enter a text.";
-
-$employees = Employee::All();
-$jobs = Job::All();
-$countries = Country::All();
-$customers = Customer::All();
-$managers = getManagers($employees);
-$incomes = getIncomeLevels($customers);
-$chosenCountry;
 function convertToNull($value) {
 	return $value == ("" OR 0) ? null : $value;
 }
@@ -66,6 +41,27 @@ function getIncomeLevels($customers){
 	return $incomes;
 }
 try {
+	$faker = Faker\Factory::create();
+	$customer_id = $faker->numberBetween(1000, 9999);
+	$cust_first_name = $faker->firstname();
+	$cust_last_name = $faker->lastname();
+	$cust_street_address = $faker->streetAddress();
+	$cust_postal_code = $faker->postcode();
+	$phone_number = $faker->phoneNumber();
+	$credit_limit = $faker->randomFloat(1, 100, 5000);
+	$cust_email = $faker->email();
+	$geo_location = $faker->latitude() . ", " . $faker->longitude();
+	$date_of_birth = $faker->date();
+	$marital_status = $faker->randomElement(["single", "married"]);
+	$gender = $faker->randomElement(["M", "F"]);
+	$text_err = "Please enter a text.";
+
+	$employees = Employee::All();
+	$countries = Country::All();
+	$customers = Customer::All();
+	$managers = getManagers($employees);
+	$incomes = getIncomeLevels($customers);
+	$chosenCountry;
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
         foreach($countries as $country){
             if($country->getCountryId() == $_POST["cust_country"]){
@@ -116,16 +112,16 @@ try {
 		$newCustomer->save();
 		header("Location: customers.php");
 	}
-	} 
-	catch (mysqli_sql_exception $e) {
-		echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
-	} 
-	catch (Exception $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	} 
-	catch (Error $e) {
-		echo "</p>" . $e-> getMessage() . "</p>";
-	}
+} 
+catch (mysqli_sql_exception $e) {
+	echo  "</p> ERROR:" . $e-> getMessage() . "</p>";
+} 
+catch (Exception $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+} 
+catch (Error $e) {
+	echo "</p>" . $e-> getMessage() . "</p>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="es-ES">

@@ -10,37 +10,12 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use config\Database;
 use models\Employee;
 use models\Department;
 use models\Job;
 use Faker\Factory;
 use Carbon\Carbon;
 
-$faker = Faker\Factory::create();
-$employees = Employee::All();
-if(isset($_POST["id"]) && !empty($_POST["id"])){
-	$employee_id = $_POST["id"];
-}
-else{
-	if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
-		$employee_id =  trim($_GET["id"]);
-	}
-}
-//$employee_id = isset($_GET['id'])?$_GET['id']:"";
-$first_name = getEmployeeById($employee_id, $employees)->getFirstName();
-$last_name = getEmployeeById($employee_id, $employees)->getLastName();
-$email = getEmployeeById($employee_id, $employees)->getEmail();
-$phone = getEmployeeById($employee_id, $employees)->getPhoneNumber();
-$hire_date = getEmployeeById($employee_id, $employees)->getHireDate();
-$job_id = getEmployeeById($employee_id, $employees)->getJobId();
-$salary = getEmployeeById($employee_id, $employees)->getSalary();
-$commission = getEmployeeById($employee_id, $employees)->getCommisionPct();
-$manager_id = getEmployeeById($employee_id, $employees)->getManagerId();
-$department_id = getEmployeeById($employee_id, $employees)->getDepartmentId();
-$text_err = "Please enter a text.";
-
-$managers = getManagers($employees);
 function getEmployeeById($employee_id, $employees){
 	foreach($employees as $employee){
 		if($employee->getEmployeeId() == $employee_id){
@@ -68,13 +43,45 @@ function getManagers($employees){
 	return $managers;
 }
 try {
+	$employees = Employee::All();
+	if(isset($_POST["id"]) && !empty($_POST["id"])){
+		$employee_id = $_POST["id"];
+	}
+	else{
+		if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+			$employee_id =  trim($_GET["id"]);
+		}
+	}
+	//$employee_id = isset($_GET['id'])?$_GET['id']:"";
+	$employee = getEmployeeById($employee_id, $employees);
+	$first_name = $employee->getFirstName();
+	$last_name = $employee->getLastName();
+	$email = $employee->getEmail();
+	$phone = $employee->getPhoneNumber();
+	$hire_date = $employee->getHireDate();
+	$job_id = $employee->getJobId();
+	$salary = $employee->getSalary();
+	$commission = $employee->getCommisionPct();
+	$manager_id = $employee->getManagerId();
+	$department_id = $employee->getDepartmentId();
+	$text_err = "Please enter a text.";
+
+	$managers = getManagers($employees);
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
 		$employee_id = 		isset($_POST['employee_id'])?$_POST['employee_id']:"";
 		$last_name = 		$_POST["last_name"];
 		$first_name = 		$_POST["first_name"];
 		$job_id = 			$_POST["job_id"];
 		$salary = 			$_POST["salary"];
-		$email = 			$_POST["email"];
+		foreach($employees as $emp){
+			if($emp->getEmail() == $_POST["email"]){
+				$email = $employee->getEmail();
+				break;
+			}
+			else{
+				$email = 	$_POST["email"];
+			}
+		}
 		$phone = 			$_POST["phone"];
 		$commission = 		$_POST["commission"];
 		$manager_id = 		$_POST["manager_id"];
@@ -106,7 +113,7 @@ try {
 	catch (Error $e) {
 		echo "</p>" . $e-> getMessage() . "</p>";
 	}
-	//Si pongo el header aquí no me muestra el formulario
+	//Si pongo el header aquí (Finally) no me muestra el formulario
 ?>
 <!DOCTYPE html>
 <html lang="es-ES">
@@ -232,7 +239,7 @@ try {
 							echo "<select name=manager_id id=manager_id class=form-select>";
 							foreach($managers as $manager){
 								if($manager->getEmployeeId() == $manager_id){
-									echo "<option value=" . $manager->getEmployeeId() . " selected>" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
+									echo "<option value=" . $manager_id . " selected>" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
 								}
 								else{
 									echo "<option value=" . $manager->getEmployeeId() . ">" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
