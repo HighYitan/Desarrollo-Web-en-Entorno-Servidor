@@ -2,6 +2,7 @@
 <html lang="es-ES">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="../css/estils.css">
 		<title>Delete Customer</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -75,8 +76,9 @@
 					}
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
-                    use models\Customer;
+                    use models\Customer; // Importando las clases model.
                     use models\Employee;
+					use Carbon\Carbon; //Uso Carbon para enseñar el año de forma dinámica en el footer.
 	    			function getManagers($employees){ //Encuentra todos los employees que son managers
 	    				$managers = [];
 	    				foreach($employees as $employee1){//Comprueba si tiene jefe
@@ -91,15 +93,15 @@
 	    				return $managers;
 	    			}
 					try {
-						$customers = Customer::All();
+						$customers = Customer::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
 						$employees = Employee::All();
 						$readCustomer;
 						$managerName;
 						$managers = getManagers($employees);
-						echo'<table class="table table-bordered table-dark table-striped">';
+						echo'<table class="table table-bordered table-dark table-striped">'; //He añadido algunos estilos en Bootstrap y los he retocado un poco con CSS para que el layout y las tablas queden más bonitas.
 						echo 
 							"<thead>" .
-								"<tr>" . 
+								"<tr>" . //Muestro todos los campos porque estamos en la página de borrado.
 									"<th>Customer ID</th>"          .
 									"<th>First Name</th>"  .
 									"<th>Last Name</th>" .
@@ -119,30 +121,30 @@
                                     "<th>Marital Status</th>" .
                                     "<th>Gender</th>" .
                                     "<th>Income Level</th>" .
-									"<th>Actions "     .
+									"<th>Actions "     . //Nueva entrada de Customer en la Base de Datos.
 									'<a href="customer_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
 									"</th>" .
 								"</tr>" .
 							"</thead>";
 							echo "<tbody>";
-                            foreach($customers as $customer){
+                            foreach($customers as $customer){ //Obtengo el Customer por medio del $_GET["id"] para mostrarlo en la tabla.
 	    						if($customer->getCustomerId() == $_GET["id"]){
 	    							$readCustomer = $customer;
 	    						}
 	    					}
-                            if($readCustomer->getAccountMgrId() != null){
+                            if($readCustomer->getAccountMgrId() != null){ //Comparando los ID's para mostrar el nombre del Manager en lugar del ID para que sea más entendible para el usuario.
 	    						foreach($managers as $manager){
 	    							if($manager->getEmployeeId() == $readCustomer->getAccountMgrId()){
 	    								$managerName = $manager->getFirstName() . " " . $manager->getLastName();
 	    							}
 	    						}
 	    					}
-	    					else{
+	    					else{ //Si el Customer no tiene Manager encargado, se muestra "No manager".
 	    						$managerName = "No manager";
 	    					}
 							if(array_key_exists('delete',$_POST)){ //Si se pulsa el botón de delete
                                 $readCustomer->destroy();
-                                header("Location: customers.php");
+                                header("Location: customers.php"); // Redirige a la lista de Customers.
                             }
 							echo 
 								"<tr>" . 
@@ -159,13 +161,13 @@
                                     "<td>" . $readCustomer->getNlsTerritory()   . "</td>" .
                                     "<td>" . $readCustomer->getCreditLimit()   . "</td>" .
                                     "<td>" . $readCustomer->getCustEmail()      . "</td>" .
-                                    "<td>" . $managerName      . "</td>" .
+                                    "<td>" . $managerName      . "</td>" . //Muestro el nombre del Manager asociado al ID del Manager encargado del Cliente.
                                     "<td>" . $readCustomer->getCustGeoLocation()      . "</td>" .
                                     "<td>" . $readCustomer->getDateOfBirth()      . "</td>" .
                                     "<td>" . $readCustomer->getMaritalStatus()      . "</td>" .
                                     "<td>" . $readCustomer->getGender()      . "</td>" .
                                     "<td>" . $readCustomer->getIncomeLevel()      . "</td>" .
-									"<td>" .
+									"<td>" . //Estos botones utilizan $_GET en la página asociada a través del ID para CREAR. LEER. ACTUALIZAR. BORRAR. (CRUD) de la BD.
 										'<a href="customer_read.php?id='   . $customer->getCustomerId() . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
 										'<a href="customer_update.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
 									"</td>" .
@@ -184,14 +186,14 @@
 					}
 					?>
 					<form method="post">
-                        <div class="d-grid gap-2">
-                        	<button type="submit" name="delete" class="btn btn-danger btn-lg" value="delete">Are you sure you want to delete this customer?</button>
+                        <div class="d-grid gap-2"> <!-- Formulario para borrar el Cliente - Al pulsar el botón será eliminado para siempre. -->
+                        	<button type="submit" name="delete" class="btn btn-danger btn-lg" value="delete">Are you sure you want to delete this Customer?</button>
                         </div>
                     </form>
 				</div>
 			</div>
-			<div class="row bg-dark pt-3">
-				<p class="text-white">(c) IES Emili Darder - 2022</p>
+			<div class="row bg-dark pt-3 mb-5">
+				<p class="text-white">(c) IES Emili Darder - <?php echo Carbon::now()->year; ?></p>
 			</div>
 		</div>
 	</body>

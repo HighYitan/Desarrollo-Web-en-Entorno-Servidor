@@ -1,15 +1,14 @@
 <?php
 namespace models;
 use config\Database;
-class Location extends Model{
-    protected static $table = "locations"; // Definir la taula associada a la classe
+class Warehouse extends Model{
+    protected static $table = "warehouses"; // Definir la taula associada a la classe
     public function __construct(
-        private int $location_id,
-        private ?string $street_address = null,
-        private ?string $postal_code = null,
-        private ?string $city = null,
-        private ?string $state_province = null,
-        private ?string $country_id = null
+        private int $warehouse_id,
+        private ?string $warehouse_name = null,
+        private ?int $location_id = null,
+        private ?string $warehouse_spec = null,
+        private ?string $wh_geo_location = null,
     ){}
     public function save() : void{ // Mètode per guardar la localitat a la base de dades
         error_reporting(E_ALL);
@@ -20,25 +19,23 @@ class Location extends Model{
 			//$db->conn->begin_transaction();
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta d'INSERT
-            if (isset($this->location_id)) {
+            if (isset($this->warehouse_id)) {
                 // Variant per a MySQL: executa INSERT/UPDATE a la vegada - Preparar l'INSERT / UPDATE
-                $sql = "INSERT INTO $table (location_id, street_address, postal_code, city, state_province, country_id) 
-                        VALUES (?, ?, ?, ?, ?, ?)
+                $sql = "INSERT INTO $table (warehouse_id, warehouse_name, location_id, warehouse_spec, wh_geo_location) 
+                        VALUES (?, ?, ?, ?, ?)
                         ON DUPLICATE KEY
                             UPDATE
-                                street_address     = VALUES(street_address),
-                                postal_code        = VALUES(postal_code),
-                                city               = VALUES(city),
-                                state_province     = VALUES(state_province),
-                                country_id         = VALUES(country_id)";
+                                warehouse_name     = VALUES(warehouse_name),
+                                location_id        = VALUES(location_id),
+                                warehouse_spec               = VALUES(warehouse_spec),
+                                wh_geo_location     = VALUES(wh_geo_location)";
                 $stmt = $db->getConn()->prepare($sql);
-                $stmt->bind_param("isssss",
-                                        $this->location_id, 
-                                        $this->street_address, 
-                                        $this->postal_code,
-                                        $this->city,
-                                        $this->state_province,
-                                        $this->country_id
+                $stmt->bind_param("isiss",
+                                        $this->warehouse_id, 
+                                        $this->warehouse_name, 
+                                        $this->location_id,
+                                        $this->warehouse_spec,
+                                        $this->wh_geo_location
 				);
                 $stmt->execute();// Executar la consulta
             }
@@ -67,14 +64,14 @@ class Location extends Model{
 			//$db->conn->begin_transaction();
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta del delete
-            if (isset($this->location_id)) {
-                $sql = "SELECT * FROM $table WHERE location_id = $this->location_id";
+            if (isset($this->warehouse_id)) {
+                $sql = "SELECT * FROM $table WHERE warehouse_id = $this->warehouse_id";
                 $result = $db->getConn()->query($sql);
                 if($result->num_rows == 1){ // Comprovar si hi ha resultats
                     $sql = "DELETE FROM $table
-                            WHERE location_id = ?";
+                            WHERE warehouse_id = ?";
                     $stmt = $db->getConn()->prepare($sql);
-                    $stmt->bind_param("i", $this->location_id); // Vincular els valors
+                    $stmt->bind_param("i", $this->warehouse_id); // Vincular els valors
                     $stmt->execute();// Executar la consulta
                 }
                 else{
@@ -100,23 +97,20 @@ class Location extends Model{
             }
         }
     }
+    public function getWarehouseId(){
+        return $this->warehouse_id;
+    }
+    public function getWarehouseName(){
+        return $this->warehouse_name;
+    }
     public function getLocationId(){
         return $this->location_id;
     }
-    public function getStreetAddress(){
-        return $this->street_address;
+    public function getWarehouseSpec(){
+        return $this->warehouse_spec;
     }
-    public function getPostalCode(){
-        return $this->postal_code;
-    }
-    public function getCity(){
-        return $this->city;
-    }
-    public function getStateProvince(){
-        return $this->state_province;
-    }
-    public function getCountryId(){
-        return $this->country_id;
+    public function getWhGeoLocation(){
+        return $this->wh_geo_location;
     }
 }
 ?>

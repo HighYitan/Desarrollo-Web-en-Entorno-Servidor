@@ -2,6 +2,7 @@
 <html lang="es-ES">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="../css/estils.css">
 		<title>Read Employee</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -75,10 +76,11 @@
 					}
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
-					use models\Employee;
+					use models\Employee; // Importando las clases model.
 					use models\Department;
 					use models\Job;
-					function getManagers($employees){
+					use Carbon\Carbon; //Uso Carbon para enseñar el año de forma dinámica en el footer.
+					function getManagers($employees){ //Encuentra todos los employees que son managers
 						$managers = [];
 						foreach($employees as $employee1){//Comprueba si tiene jefe
 							foreach($employees as $employee2){//Comprueba si es jefe
@@ -92,18 +94,18 @@
 						return $managers;
 					}
 					try {
-						$employees = Employee::All();
+						$employees = Employee::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
 						$departments = Department::All();
 						$jobs = Job::All();
 						$readEmployee;
 						$deptName;
 						$jobName;
 						$managerName;
-						$managers = getManagers($employees);
-						echo '<table class="table table-bordered table-dark table-striped">';
+						$managers = getManagers($employees); // Filtro los Employees con este método para obtener los empleados que son managers.
+						echo '<table class="table table-bordered table-dark table-striped">'; //He añadido algunos estilos en Bootstrap y los he retocado un poco con CSS para que el layout y las tablas queden más bonitas.
 						echo 
 							"<thead>" .
-								"<tr>" . 
+								"<tr>" . //Muestro todos los campos porque estamos en la página de los detalles.
 									"<th>Employee ID</th>" 	.
 									"<th>First Name</th>"  	.
 									"<th>Last Name</th>" 	.
@@ -115,35 +117,35 @@
 									"<th>Commission Percentage</th>" .
 									"<th>Manager</th>" 		.
 									"<th>Department</th>" 	.
-									"<th>Actions "     		.
+									"<th>Actions "     		. //Nueva entrada de Employee en la Base de Datos.
 									'<a href="employee_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
 									"</th>" .
 								"</tr>" .
 							"</thead>";
 							echo "<tbody>";
-							foreach($employees as $employee){
+							foreach($employees as $employee){ //Obtengo el Empleado por medio del $_GET["id"] para mostrarlo en la tabla.
 								if($employee->getEmployeeId() == $_GET["id"]){
 									$readEmployee = $employee;
 								}
 							}
-							foreach($departments as $department){
+							foreach($departments as $department){ //Comparando los ID's para mostrar el nombre del Departamento en lugar del ID para que sea más entendible para el usuario.
 								if(($readEmployee->getDepartmentId()) == ($department->getDepartmentId())){
 									$deptName = $department->getDepartmentName();
 								}
 							}
-							foreach($jobs as $job){
+							foreach($jobs as $job){ //Comparando los ID's para mostrar el nombre del Job en lugar del ID para que sea más entendible para el usuario.
 								if(($readEmployee->getJobId()) == ($job->getJobId())){
 									$jobName = $job->getJobTitle();
 								}
 							}
-							if($readEmployee->getManagerId() != null){
+							if($readEmployee->getManagerId() != null){ //Si el Employee tiene un Manager, se muestra el nombre del Manager.
 								foreach($managers as $manager){
 									if($manager->getEmployeeId() == $readEmployee->getManagerId()){
 										$managerName = $manager->getFirstName() . " " . $manager->getLastName();
 									}
 								}
 							}
-							else{
+							else{//Sino se muestra "No manager".
 								$managerName = "No manager";
 							}
 							echo 
@@ -154,12 +156,12 @@
 									"<td>" . $readEmployee->getEmail()      . "</td>" .
 									"<td>" . $readEmployee->getPhoneNumber()      . "</td>" .
 									"<td>" . $readEmployee->getHireDate()      . "</td>" .
-									"<td>" . $jobName      . "</td>" .
+									"<td>" . $jobName      . "</td>" . //Muestro el nombre del Trabajo asociado al ID del Trabajo del Empleado.
 									"<td>" . $readEmployee->getSalary()      . "</td>" .
 									"<td>" . $readEmployee->getCommisionPct()      . "</td>" .
-									"<td>" . $managerName      . "</td>" .
-									"<td>" . $deptName . "</td>" .
-									"<td>" .
+									"<td>" . $managerName      . "</td>" . //Muestro el nombre del Manager asociado al ID del Manager del Empleado.
+									"<td>" . $deptName . "</td>" . //Muestro el nombre del Departamento asociado al ID del Departamento del Empleado.
+									"<td>" . //Estos botones utilizan $_GET en la página asociada a través del ID para CREAR. LEER. ACTUALIZAR. BORRAR. (CRUD) de la BD.
 										'<a href="employee_update.php?id=' . $readEmployee->getEmployeeId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
 										'<a href="employee_delete.php?id=' . $readEmployee->getEmployeeId() . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'               .
 									"</td>" .
@@ -180,7 +182,7 @@
 				</div>
 			</div>
 			<div class="row bg-dark pt-3">
-				<p class="text-white">(c) IES Emili Darder - 2022</p>
+				<p class="text-white">(c) IES Emili Darder - <?php echo Carbon::now()->year; ?></p>
 			</div>
 		</div>
 	</body>

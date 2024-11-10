@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="../css/estils.css">
-		<title>Employees List</title>
+		<title>Delete Warehouse</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -63,7 +63,7 @@
 				</div>
 
 				<div class="col-md-10 table-responsive">
-					<h3>Employees</h3>
+					<h3>Delete Warehouse</h3>
 					<?php
 					session_start(); // si ja existeix sessió, associa la sessió a l'actual
 					ob_start();  // necessari per a la redirecció de 'header()': resetea el buffer de salida
@@ -76,46 +76,66 @@
 					}
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
-					use models\Employee; // Importando las clases model.
-					use models\Department;
+                    use models\Warehouse; // Importando las clases model.
+                    use models\Location;
 					use Carbon\Carbon; //Uso Carbon para enseñar el año de forma dinámica en el footer.
+                    function getWarehouse($warehouses, $warehouse_id){ //Función para obtener el Warehouse por su ID.
+                        foreach($warehouses as $warehouse){
+                            if($warehouse->getWarehouseId() == $warehouse_id){
+                                return $warehouse;
+                            }
+                        }
+                        return null;
+                    }
 					try {
-						$employees = Employee::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
-						$departments = Department::All();
-						$deptName;
+                        if(isset($_POST["id"]) && !empty($_POST["id"])){//Sino order_id se queda como undefined al terminar el formulario y da error.
+                            $warehouse_id = $_POST["id"];
+                        }
+                        else{
+                            if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+                                $warehouse_id =  trim($_GET["id"]);
+                            }
+                        }
+                        $warehouses = Warehouse::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
+                        $locations = Location::All();
+                        $warehouse = getWarehouse($warehouses, $warehouse_id); //Obtengo el Warehouse por su ID.
+						$locationName;
+                        if(array_key_exists('delete',$_POST)){ //Si se pulsa el botón de delete se ejecuta
+                            $warehouse->destroy();
+                            header("Location: warehouses.php"); //Redirige a la lista de Warehouses.
+                        }
 						echo'<table class="table table-bordered table-dark table-striped">'; //He añadido algunos estilos en Bootstrap y los he retocado un poco con CSS para que el layout y las tablas queden más bonitas.
 						echo 
 							"<thead>" .
-								"<tr>" . //Muestro unos pocos campos para después mostrarlos todos en employee_read.php
-									"<th>Employee ID</th>"          .
-									"<th>First Name</th>"  .
-									"<th>Last Name</th>" .
-									"<th>Department</th>" .
-									"<th>Actions "     . //Nueva entrada de Empleado en la Base de Datos.
-									'<a href="employee_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
+								"<tr>" . //Muestro todos los campos porque estamos en la página de borrado.
+									"<th>Warehouse ID</th>"          .
+									"<th>Warehouse Name</th>"  .
+									"<th>Location</th>" .
+									"<th>Warehouse Specialty</th>" .
+                                    "<th>Geo Location</th>" .
+									"<th>Actions "     . //Nueva entrada de Warehouse en la Base de Datos.
+									'<a href="warehouse_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
 									"</th>" .
 								"</tr>" .
 							"</thead>";
 							echo "<tbody>";
-							foreach($employees as $employee){ //Recorriéndo el array de filas de la base de datos para mostrarlas en la tabla.
-								foreach($departments as $department){ //Comparando los ID's para mostrar el nombre del Departamento en lugar del ID para que sea más entendible para el usuario.
-									if(($employee->getDepartmentId()) == ($department->getDepartmentId())){
-										$deptName = $department->getDepartmentName();
-									}
-								}
-								echo 
-									"<tr>" . 
-										"<td>" . $employee->getEmployeeId()    . "</td>" .
-										"<td>" . $employee->getFirstName()       . "</td>" .
-										"<td>" . $employee->getLastName()      . "</td>" .
-										"<td>" . $deptName . "</td>" . //Muestro el nombre del departamento asociado al ID en el que trabaja el Empleado.
-										"<td>" . //Estos botones utilizan $_GET en la página asociada a través del ID para CREAR. LEER. ACTUALIZAR. BORRAR. (CRUD) de la BD.
-											'<a href="employee_read.php?id='   . $employee->getEmployeeId() . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
-											'<a href="employee_update.php?id=' . $employee->getEmployeeId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
-											'<a href="employee_delete.php?id=' . $employee->getEmployeeId() . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'               .
-										"</td>" .
-									"</tr>";
-							}
+                            foreach($locations as $location){ //Obtengo el nombre de la localización del Warehouse a través de su ID y el model Location.
+                                if($location->getLocationId() == $warehouse->getLocationId()){
+                                    $locationName = $location->getStreetAddress();
+                                }
+                            }
+							echo 
+								"<tr>" . 
+									"<td>" . $warehouse->getWarehouseId()    . "</td>" .
+									"<td>" . $warehouse->getWarehouseName()       . "</td>" .
+									"<td>" . $locationName     . "</td>" . //Muestro el nombre de la localización asociado al ID de la misma y del location_id del Warehouse.
+									"<td>" . $warehouse->getWarehouseSpec() . "</td>" .
+                                    "<td>" . $warehouse->getWhGeoLocation() . "</td>" .
+									"<td>" . //Estos botones utilizan $_GET en la página asociada a través del ID para CREAR. LEER. ACTUALIZAR. BORRAR. (CRUD) de la BD.
+										'<a href="warehouse_read.php?id='   . $warehouse->getWarehouseId() . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
+										'<a href="warehouse_update.php?id=' . $warehouse->getWarehouseId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
+									"</td>" .
+								"</tr>";
 							echo "</tbody>"; 
 						echo "</table>";
 					}
@@ -129,6 +149,11 @@
 						echo "<p>" . $e-> getMessage() . "</p>";
 					}
 					?>
+                    <form method="post" class="mb-3">
+                        <div class="d-grid gap-2">
+                        	<button type="submit" name="delete" class="btn btn-danger btn-lg" value="delete">Are you sure you want to delete this warehouse?</button>
+                        </div>
+                    </form>
 				</div>
 			</div>
 			<div class="row bg-dark pt-3">

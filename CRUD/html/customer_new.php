@@ -10,16 +10,16 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use models\Employee;
+use models\Employee; // Importando las clases model.
 use models\Customer;
 use models\Country;
-use Faker\Factory;
+use Faker\Factory; // Utilizaré Faker y Carbon para generar datos aleatorios.
 use Carbon\Carbon;
 
-function convertToNull($value) {
+function convertToNull($value) { //Convierte un valor vació o 0 a null
 	return $value == ("" OR 0) ? null : $value;
 }
-function getManagers($employees){
+function getManagers($employees){ //Encuentra todos los employees que son managers de ventas
 	$managers = [];
 	foreach($employees as $employee){
 		if($employee->getJobId() == "SA_MAN"){//Comprueba si employee es manager de ventas
@@ -30,45 +30,45 @@ function getManagers($employees){
 	}
 	return $managers;
 }
-function getIncomeLevels($customers){
+function getIncomeLevels($customers){ //Encuentra los IncomeLevel posibles de los Customers y los ordena para ser utilizados en el formulario.
 	$incomes = [];
 	foreach($customers as $customer){
-		if(!in_array($customer->getIncomeLevel(), $incomes)){//Comprueba si ya está en la lista de managers
-			$incomes[] = $customer->getIncomeLevel();//Se añade a la lista de managers
+		if(!in_array($customer->getIncomeLevel(), $incomes)){//Comprueba si ya está en la lista de Incomes
+			$incomes[] = $customer->getIncomeLevel();//Se añade a la lista de Incomes
 		}
 	}
-    sort($incomes);
+    sort($incomes); //Ordena los Incomes
 	return $incomes;
 }
 try {
-	$faker = Faker\Factory::create();
+	$faker = Faker\Factory::create(); //Genero datos aleatorios del tipo correspondiente con Faker.
 	$customer_id = $faker->numberBetween(1000, 9999);
 	$cust_first_name = $faker->firstname();
 	$cust_last_name = $faker->lastname();
 	$cust_street_address = $faker->streetAddress();
 	$cust_postal_code = $faker->postcode();
 	$phone_number = $faker->phoneNumber();
-	$credit_limit = $faker->randomFloat(1, 100, 5000);
+	$credit_limit = $faker->randomFloat(1, 100, 5000); //Número decimal con 1 dígito de precisión entre 100 y 5000 para el límite de crédito.
 	$cust_email = $faker->email();
-	$geo_location = $faker->latitude() . ", " . $faker->longitude();
-	$date_of_birth = $faker->date();
-	$marital_status = $faker->randomElement(["single", "married"]);
+	$geo_location = $faker->latitude() . ", " . $faker->longitude(); //Coordenadas geográficas
+	$date_of_birth = $faker->date(); //Genera una fecha aleatoria.
+	$marital_status = $faker->randomElement(["single", "married"]); //Elige aleatoriamente entre dos valores escogidos por mi.
 	$gender = $faker->randomElement(["M", "F"]);
 	$text_err = "Please enter a text.";
 
-	$employees = Employee::All();
+	$employees = Employee::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
 	$countries = Country::All();
 	$customers = Customer::All();
-	$managers = getManagers($employees);
-	$incomes = getIncomeLevels($customers);
+	$managers = getManagers($employees); //Obtengo los managers de ventas.
+	$incomes = getIncomeLevels($customers); //Obtengo los IncomeLevel posibles.
 	$chosenCountry;
-	if($_SERVER["REQUEST_METHOD"] == "POST"){
-        foreach($countries as $country){
+	if($_SERVER["REQUEST_METHOD"] == "POST"){ //Si se pulsa el botón de submit se ejecuta
+        foreach($countries as $country){ //Encuentro el país seleccionado en el formulario y lo asigno a otro campo de la Base de Datos, adaptándolo a los campos de la tabla.
             if($country->getCountryId() == $_POST["cust_country"]){
                 $chosenCountry = $country;
             }
         }
-		$customer_id            = $_POST["id"];
+		$customer_id            = $_POST["id"]; //Obtengo los valores del formulario.
         $cust_first_name        = $_POST["cust_first_name"];
 		$cust_last_name         = $_POST["cust_last_name"];
         $cust_street_address    = $_POST["cust_street_address"];
@@ -77,8 +77,8 @@ try {
 		$cust_state             = $_POST["cust_state"];
         $cust_country           = $_POST["cust_country"];
         $phone_number           = $_POST["phone_number"];
-        $nls_language           = strtolower($chosenCountry->getCountryId());
-        $nls_territory          = strtoupper($chosenCountry->getCountryName());
+        $nls_language           = strtolower($chosenCountry->getCountryId()); //Convierto el ID del país a minúsculas para el campo de idioma.
+        $nls_territory          = strtoupper($chosenCountry->getCountryName()); //Convierto el nombre del país a mayúsculas para el campo de territorio.
         $credit_limit           = $_POST["credit_limit"];
         $cust_email             = $_POST["cust_email"];
         $account_mgr_id         = $_POST["manager_id"];
@@ -88,9 +88,9 @@ try {
         $gender                 = $_POST["gender"];
         $income_level           = $_POST["income_level"];
 
-		$newCustomer = new Customer(
+		$newCustomer = new Customer( //Creo un nuevo Customer con los valores obtenidos del formulario.
 			$customer_id,
-			convertToNull($cust_first_name),
+			convertToNull($cust_first_name), //Convierto los valores que puedan estar vacíos o ser 0 a null.
 			convertToNull($cust_last_name),
 			convertToNull($cust_street_address),
 			convertToNull($cust_postal_code),
@@ -103,14 +103,14 @@ try {
             convertToNull($credit_limit),
             convertToNull($cust_email),
             $account_mgr_id,
-            convertToNull(json_encode($geo_location)),
+            convertToNull(json_encode($geo_location)), //Convierto las coordenadas geográficas a un formato JSON ya que el campo de la tabla lo exige así.
             convertToNull($date_of_birth),
             $marital_status,
 			$gender,
             $income_level
 		);
 		$newCustomer->save();
-		header("Location: customers.php");
+		header("Location: customers.php"); //Redirige a la lista de Customers.
 	}
 } 
 catch (mysqli_sql_exception $e) {
@@ -189,10 +189,10 @@ catch (Error $e) {
 				<div class="col-md-10">
 					<h3>New Customer</h3>
 				
-					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> <!-- Formulario para introducir los datos del nuevo Customer -->
 						<div class="form-group">
 							<label class="form-label">Customer ID</label>
-							<input type="text" name="id" class="form-control" required value="<?php echo $customer_id; ?>">
+							<input type="text" name="id" class="form-control" required value="<?php echo $customer_id; ?>"> 
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<div class="form-group">
@@ -226,7 +226,7 @@ catch (Error $e) {
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
                         <?php
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el País del nuevo Customer, enseño el nombre del Customer para que sea más fácil seleccionar el Customer correcto.
 							echo "<label class=form-label>Country</label>";
 							echo "<select name=cust_country id=cust_country class=form-select>";
 							foreach($countries as $country){
@@ -251,7 +251,7 @@ catch (Error $e) {
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<?php
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Manager de ventas para el nuevo Customer, enseño el nombre del Manager para que sea más fácil seleccionar el Manager correcto.
 							echo "<label class=form-label>Manager</label>";
 							echo "<select name=manager_id id=manager_id class=form-select>";
 							foreach($managers as $manager){
@@ -271,10 +271,10 @@ catch (Error $e) {
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
                         <?php
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Estado Civil del nuevo Customer.
 							echo "<label class=form-label>Marital Status</label>";
 							echo "<select name=marital_status id=marital_status class=form-select>";
-                                if($marital_status == "single"){
+                                if($marital_status == "single"){ //Faker selecciona uno aleatoriamente por defecto.
                                     echo "<option value=single selected>Single</option>";
                                     echo "<option value=married>Married</option>";
                                 }
@@ -284,10 +284,10 @@ catch (Error $e) {
                                 }
 							echo "</select>";
 						echo "</div>";
-                        echo "<div class=form-group>";
+                        echo "<div class=form-group>"; //Select para seleccionar el Sexo del nuevo Customer.
                             echo "<label class=form-label>Gender</label>";
                             echo "<select name=gender id=gender class=form-select>";
-                                if($gender == "M"){
+                                if($gender == "M"){ //Faker selecciona uno aleatoriamente por defecto.
                                     echo "<option value=M selected>Male</option>";
                                     echo "<option value=F>Female</option>";
                                 }
@@ -297,7 +297,7 @@ catch (Error $e) {
                                 }
                             echo "</select>";
                         echo "</div>";
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Income del nuevo Customer, enseño el nombre del Income para que sea más fácil seleccionar el Income correcto.
 							echo "<label class=form-label>Income Level</label>";
 							echo "<select name=income_level id=income_level class=form-select>";
 							foreach($incomes as $income){
@@ -306,13 +306,13 @@ catch (Error $e) {
 							echo "</select>";
 						echo "</div>";
 						?>
-						<input type="submit" class="btn btn-primary my-2" value="Submit">
-						<a href="employees.php" class="btn btn-secondary my-2 ml-2">Cancel</a>
+						<input type="submit" class="btn btn-primary my-2" value="Submit"> <!-- Botón para enviar el formulario -->
+						<a href="customers.php" class="btn btn-secondary my-2 ml-2">Cancel</a>
 					</form>
 				</div>
 			</div>
 			<div class="row bg-dark pt-3">
-				<p class="text-white">(c) IES Emili Darder - 2022</p>
+				<p class="text-white">(c) IES Emili Darder - <?php echo Carbon::now()->year; ?></p>
 			</div>
 		</div>
 	</body>

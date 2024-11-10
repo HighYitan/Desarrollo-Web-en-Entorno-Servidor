@@ -2,6 +2,7 @@
 <html lang="es-ES">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="../css/estils.css">
 		<title>Customers List</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -75,25 +76,26 @@
 					}
 					ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 					require "../vendor/autoload.php";
-                    use models\Customer;
+                    use models\Customer; // Importando las clases model.
+					use Carbon\Carbon; //Uso Carbon para enseñar el año de forma dinámica en el footer.
 					try {
-						$customers = Customer::All();
-						echo'<table class="table table-bordered table-dark table-striped">';
+						$customers = Customer::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
+						echo'<table class="table table-bordered table-dark table-striped">'; //He añadido algunos estilos en Bootstrap y los he retocado un poco con CSS para que el layout y las tablas queden más bonitas.
 						echo 
 							"<thead>" .
-								"<tr>" . 
+								"<tr>" . //Muestro unos pocos campos para después mostrarlos todos en customer_read.php
 									"<th>Customer ID</th>"          .
 									"<th>First Name</th>"  .
 									"<th>Last Name</th>" .
 									"<th>Phone Number</th>" .
                                     "<th>Email</th>" .
-									"<th>Actions "     .
+									"<th>Actions "     . //Nueva entrada de Customer en la Base de Datos.
 									'<a href="customer_new.php' . '" class="mr-2" title="New File" data-toggle="tooltip"><span class="fa fa-pencil-square-o"></span></a>'      . 
 									"</th>" .
 								"</tr>" .
 							"</thead>";
 							echo "<tbody>";
-							foreach($customers as $customer){
+							foreach($customers as $customer){ //Recorriéndo el array de filas de la base de datos para mostrarlas en la tabla.
 								echo 
 									"<tr>" . 
 										"<td>" . $customer->getCustomerId()    . "</td>" .
@@ -101,7 +103,7 @@
 										"<td>" . $customer->getCustLastName()      . "</td>" .
 										"<td>" . $customer->getPhoneNumbers() . "</td>" .
                                         "<td>" . $customer->getCustEmail() . "</td>" .
-										"<td>" .
+										"<td>" . //Estos botones utilizan $_GET en la página asociada a través del ID para CREAR. LEER. ACTUALIZAR. BORRAR. (CRUD) de la BD.
 											'<a href="customer_read.php?id='   . $customer->getCustomerId() . '" class="mr-2" title="View File" data-toggle="tooltip"><span class="fa fa-eye"></span></a>'      . 
 											'<a href="customer_update.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Update File" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>' .
 											'<a href="customer_delete.php?id=' . $customer->getCustomerId() . '" class="mr-2" title="Delete File" data-toggle="tooltip"><span class="fa fa-trash"></span></a>'  .
@@ -124,7 +126,7 @@
 				</div>
 			</div>
 			<div class="row bg-dark pt-3">
-				<p class="text-white">(c) IES Emili Darder - 2022</p>
+				<p class="text-white">(c) IES Emili Darder - <?php echo Carbon::now()->year; ?></p>
 			</div>
 		</div>
 	</body>

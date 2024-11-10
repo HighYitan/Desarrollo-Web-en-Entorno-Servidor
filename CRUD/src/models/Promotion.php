@@ -1,14 +1,11 @@
 <?php
 namespace models;
 use config\Database;
-class OrderItem extends Model{
-    protected static $table = "order_items"; // Definir la taula associada a la classe
+class Promotion extends Model{
+    protected static $table = "promotions"; // Definir la taula associada a la classe
     public function __construct(
-        private int $order_id,
-        private int $product_id,
-        private ?int $line_item_id = null,
-        private ?float $unit_price = null,
-        private ?float $quantity = null
+        private int $promotion_id,
+        private ?string $promo_name
     ){}
     public function save() : void{ // Mètode per guardar l'ordre a la base de dades
         error_reporting(E_ALL);
@@ -19,25 +16,22 @@ class OrderItem extends Model{
 			//$db->conn->begin_transaction();
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta d'INSERT
-            if (isset($this->order_id) && isset($this->product_id)) {
-                $sql = "INSERT INTO $table (order_id, product_id, line_item_id, unit_price, quantity) 
-                        VALUES (?, ?, ?, ?, ?)
+            if (isset($this->promotion_id)) {
+                // Variant per a MySQL: executa INSERT/UPDATE a la vegada - Preparar l'INSERT / UPDATE
+                $sql = "INSERT INTO $table (promotion_id, promo_name) 
+                        VALUES (?, ?)
                         ON DUPLICATE KEY
                             UPDATE
-                                unit_price           = VALUES(unit_price),
-                                quantity    = VALUES(quantity)";
+                                promo_name      = VALUES(promo_name)";
                 $stmt = $db->getConn()->prepare($sql);
-                $stmt->bind_param("iiidd",
-                                        $this->order_id, 
-                                        $this->product_id, 
-                                        $this->line_item_id, 
-                                        $this->unit_price, 
-                                        $this->quantity
-                );
+                $stmt->bind_param("is",
+                                        $this->promotion_id, 
+                                        $this->promo_name
+				);
                 $stmt->execute();// Executar la consulta
             }
             else {
-                throw new \Exception ("ID ordre no informat.");
+                throw new \Exception ("ID promo no informat.");
             }
             $db->getConn()->commit();
         }
@@ -52,7 +46,7 @@ class OrderItem extends Model{
             }
         }
     }
-    public function destroy() : void{ // Mètode per eliminar l'empleat a la base de dades
+    public function destroy() : void{ // Mètode per eliminar la promo a la base de dades
         error_reporting(E_ALL);
         try{
             $db = new Database();
@@ -61,22 +55,22 @@ class OrderItem extends Model{
 			//$db->conn->begin_transaction();
             $table = static::$table; // Obtenir el nom de la taula de la classe filla
             // Preparar la consulta del delete
-            if (isset($this->order_id)) {
-                $sql = "SELECT * FROM $table WHERE order_id = $this->order_id";
+            if (isset($this->promotion_id)) {
+                $sql = "SELECT * FROM $table WHERE promotion_id = $this->promotion_id";
                 $result = $db->getConn()->query($sql);
                 if($result->num_rows == 1){ // Comprovar si hi ha resultats >= 1
                     $sql = "DELETE FROM $table
-                            WHERE order_id = ?";
+                            WHERE promotion_id = ?";
                     $stmt = $db->getConn()->prepare($sql);
-                    $stmt->bind_param("i", $this->order_id); // Vincular els valors
+                    $stmt->bind_param("i", $this->promotion_id); // Vincular els valors
                     $stmt->execute();// Executar la consulta
                 }
                 else{
-                    throw new \Exception ("L'ordre no existeix.");
+                    throw new \Exception ("La promo no existeix.");
                 }
             }
             else {
-                throw new \Exception ("ID ordre no informat.");
+                throw new \Exception ("ID promo no informat.");
             }
             $db->getConn()->commit();
         }
@@ -94,20 +88,11 @@ class OrderItem extends Model{
             }
         }
     }
-    public function getOrderId(){
-        return $this->order_id;
+    public function getPromotionId(){
+        return $this->promotion_id;
     }
-    public function getProductId(){
-        return $this->product_id;
-    }
-    public function getLineItemId(){
-        return $this->line_item_id;
-    }
-    public function getUnitPrice(){
-        return $this->unit_price;
-    }
-    public function getQuantity(){
-        return $this->quantity;
+    public function getPromoName(){
+        return $this->promo_name;
     }
 }
 ?>

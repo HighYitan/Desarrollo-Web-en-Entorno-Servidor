@@ -10,13 +10,13 @@ if (!isset($_SESSION['username'])) {  // si està definida amb un valor no null 
 }
 ob_end_flush();  // necessari per a la redirecció de 'header()': envia la sortida enmagatzemada en el buffer
 require "../vendor/autoload.php";
-use models\Employee;
+use models\Employee; // Importando las clases model.
 use models\Department;
 use models\Job;
-use Faker\Factory;
+	
 use Carbon\Carbon;
 
-function getEmployeeById($employee_id, $employees){
+function getEmployeeById($employee_id, $employees){ //Encuentra al Employee a modificar por su ID
 	foreach($employees as $employee){
 		if($employee->getEmployeeId() == $employee_id){
 			return $employee;
@@ -25,11 +25,11 @@ function getEmployeeById($employee_id, $employees){
 	return null;
 }
 
-function convertToNull($value) {
+function convertToNull($value) { //Convierte un valor vació o 0 a null
 	return $value == ("" OR 0) ? null : $value;
 }
 
-function getManagers($employees){
+function getManagers($employees){ //Encuentra todos los employees que son managers
 	$managers = [];
 	foreach($employees as $employee1){//Comprueba si tiene jefe
 		foreach($employees as $employee2){//Comprueba si es jefe
@@ -43,7 +43,9 @@ function getManagers($employees){
 	return $managers;
 }
 try {
-	$employees = Employee::All();
+	$employees = Employee::All(); // Utilizo el método de Model para seleccionar todas las entradas de la base de datos.
+	$jobs = Job::All();
+	$departments = Department::All();
 	if(isset($_POST["id"]) && !empty($_POST["id"])){
 		$employee_id = $_POST["id"];
 	}
@@ -53,8 +55,8 @@ try {
 		}
 	}
 	//$employee_id = isset($_GET['id'])?$_GET['id']:"";
-	$employee = getEmployeeById($employee_id, $employees);
-	$first_name = $employee->getFirstName();
+	$employee = getEmployeeById($employee_id, $employees); //Obtengo el empleado a modificar
+	$first_name = $employee->getFirstName(); //Obtengo los valores del empleado y los pongo por defecto en el formulario.
 	$last_name = $employee->getLastName();
 	$email = $employee->getEmail();
 	$phone = $employee->getPhoneNumber();
@@ -66,14 +68,14 @@ try {
 	$department_id = $employee->getDepartmentId();
 	$text_err = "Please enter a text.";
 
-	$managers = getManagers($employees);
-	if($_SERVER["REQUEST_METHOD"] == "POST"){
-		$employee_id = 		isset($_POST['employee_id'])?$_POST['employee_id']:"";
+	$managers = getManagers($employees); //Obtengo los managers para el formulario.
+	if($_SERVER["REQUEST_METHOD"] == "POST"){ //Si se pulsa el botón de submit se ejecuta
+		$employee_id = 		isset($_POST['employee_id'])?$_POST['employee_id']:""; //Obtengo los valores del formulario.
 		$last_name = 		$_POST["last_name"];
 		$first_name = 		$_POST["first_name"];
 		$job_id = 			$_POST["job_id"];
 		$salary = 			$_POST["salary"];
-		foreach($employees as $emp){
+		foreach($employees as $emp){ //Comprueba si el email ya existe en la base de datos
 			if($emp->getEmail() == $_POST["email"]){
 				$email = $employee->getEmail();
 				break;
@@ -87,9 +89,9 @@ try {
 		$manager_id = 		$_POST["manager_id"];
 		$department_id = 	$_POST["department_id"];
 
-		$newEmployee = new Employee(
+		$newEmployee = new Employee( //Creo un nuevo Employee con los valores obtenidos del formulario.
 			$employee_id,
-			convertToNull($first_name),
+			convertToNull($first_name), //Convierto los valores que puedan estar vacíos o ser 0 a null.
 			convertToNull($last_name),
 			convertToNull($email),
 			convertToNull($phone),
@@ -101,7 +103,7 @@ try {
 			$department_id
 		);
 		$newEmployee->save();
-		header("Location: employees.php");
+		header("Location: employees.php"); //Redirijo a la lista de Empleados.
 	}
 	} 
 	catch (mysqli_sql_exception $e) {
@@ -181,8 +183,8 @@ try {
 				<div class="col-md-10">
 					<h3>Update Employee</h3>
 				
-					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $employee_id; ?>" method="post">
-						<div class="form-group">
+					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $employee_id; ?>" method="post"> <!-- Formulario para cambiar los datos del empleado -->
+						<div class="form-group"> 
 							<label class="form-label">Employee ID</label>
 							<input type="text" name="employee_id" class="form-control" required readonly value="<?php echo $employee_id; ?>">
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
@@ -208,13 +210,12 @@ try {
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<?php
-						$jobs = Job::All();
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Job del Employee, enseño el nombre del Job para que sea más fácil seleccionar el Job adecuado.
 							echo "<label class=form-label>Job</label>";
 							echo "<select name=job_id id=job_id class=form-select>";
-							foreach($jobs as $job){
+							foreach($jobs as $job){ 
 								if($job->getJobId() == $job_id){
-									echo "<option value=" . $job->getJobId() . " selected>" . $job->getJobTitle() . "</option>";
+									echo "<option value=" . $job->getJobId() . " selected>" . $job->getJobTitle() . "</option>"; //El Job que tenía el Employee se selecciona por defecto.
 								}
 								else{
 									echo "<option value=" . $job->getJobId() . ">" . $job->getJobTitle() . "</option>";
@@ -234,32 +235,31 @@ try {
 							<span class="invalid-feedback"><?php echo $text_err;?></span>
 						</div>
 						<?php
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Manager del Employee, enseño el nombre del Job para que sea más fácil seleccionar el Job adecuado.
 							echo "<label class=form-label>Manager</label>";
 							echo "<select name=manager_id id=manager_id class=form-select>";
 							foreach($managers as $manager){
 								if($manager->getEmployeeId() == $manager_id){
-									echo "<option value=" . $manager_id . " selected>" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
+									echo "<option value=" . $manager_id . " selected>" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>"; //El Manager que tenía el Employee se selecciona por defecto.
 								}
 								else{
 									echo "<option value=" . $manager->getEmployeeId() . ">" . $manager->getFirstName() . " " . $manager->getLastName() . "</option>";
 								}
 							}
 							if($manager_id == null){
-								echo "<option value=" . 0 . " selected>" . "No manager" . "</option>";
+								echo "<option value=" . 0 . " selected>" . "No manager" . "</option>"; //Si no tenía manager se selecciona por defecto.
 							}
 							else{
 								echo "<option value=" . 0 . ">" . "No manager" . "</option>";
 							}
 							echo "</select>";
 						echo "</div>";
-						$departments = Department::All();
-						echo "<div class=form-group>";
+						echo "<div class=form-group>"; //Select para seleccionar el Dept del Employee, enseño el nombre del Dept para que sea más fácil seleccionar el Dept adecuado.
 							echo "<label class=form-label>Department</label>";
 							echo "<select name=department_id id=department_id class=form-select>";
 							foreach($departments as $department){
 								if($department->getDepartmentId() == $department_id){
-									echo "<option value=" . $department->getDepartmentId() . " selected>" . $department->getDepartmentName() . "</option>";
+									echo "<option value=" . $department->getDepartmentId() . " selected>" . $department->getDepartmentName() . "</option>"; //El Dept que tenía el Employee se selecciona por defecto.
 								}
 								else{
 									echo "<option value=" . $department->getDepartmentId() . ">" . $department->getDepartmentName() . "</option>";
@@ -268,13 +268,13 @@ try {
 							echo "</select>";
 						echo "</div>";
 						?>
-						<input type="submit" class="btn btn-primary my-2" value="Submit">
+						<input type="submit" class="btn btn-primary my-2" value="Submit"> <!-- Botón para enviar el formulario -->
 						<a href="employees.php" class="btn btn-secondary my-2 ml-2">Cancel</a>
 					</form>
 				</div>
 			</div>
 			<div class="row bg-dark pt-3">
-				<p class="text-white">(c) IES Emili Darder - 2022</p>
+				<p class="text-white">(c) IES Emili Darder - <?php echo Carbon::now()->year; ?></p>
 			</div>
 		</div>
 	</body>
