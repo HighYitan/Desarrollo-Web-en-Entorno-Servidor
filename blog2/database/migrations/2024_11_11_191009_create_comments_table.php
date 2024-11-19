@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->text('comment');
-            $table->foreignId('user_id')->constrained();
             $table->foreignId('post_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -25,6 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        //Schema::dropIfExists('update_scores_after_insert');
+        //Schema::dropIfExists('update_scores_after_update');
+        //Schema::dropIfExists('update_scores_after_delete');
         Schema::dropIfExists('comments');
     }
 };

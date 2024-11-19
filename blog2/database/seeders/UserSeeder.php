@@ -16,10 +16,11 @@ class UserSeeder extends Seeder
     {
         //
         $user = new User();
-        $user->name = "Admin";
+        $user->name = "admin";
         $user->email = "admin@abc.com";
         $user->password = Hash::make('12345678');
-        $user->role = "admin"; // $user->role_id = Role::where('name', 'admin')->value("id");
+        $user->role = "admin"; //$user->role_id = Role::where('name', 'admin')->value("id"); //Devuelve la id del rol de admin
         $user->save();
     }
 }
+//$user->role_id = Role::where('name', 'admin')->first()->id; //Devuelve la id del rol de admin

@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // Relacions entre taules:
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);  // 1:N
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);  // 1:N
+    }
 }
