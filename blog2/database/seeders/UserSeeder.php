@@ -14,6 +14,20 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        /*
+        foreach
+        $kekw = where->first()->id;
+        $kekw->kekw2s()->attach($kekw2->id);
+        JSON
+        $jsonData = file_get_contents('C://database/data/users.json');
+        $municipalities = json_decode($jsonData, true);
+
+        foreach($municipalities["municipalities"]["municipality"] as $municipality){
+            $municipality = new Municipality();
+            $municipality->name = $municipality['name'];
+            $municipality->save();
+        }
+        */
         //
         $user = new User();
         $user->name = "admin";
