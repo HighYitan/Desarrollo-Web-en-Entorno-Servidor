@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class CategorySeeder extends Seeder
 {
@@ -17,15 +18,15 @@ class CategorySeeder extends Seeder
         $category->url_clean = "noves_tecnologies";
         $category->save();
 
-        //Des d'un arxiu
+        // Des d'un arxiu JSON
         $jsonData = file_get_contents("C:\\temp\\blog\\categories.json");
         $categories = json_decode($jsonData, true);
 
         //Insertar cada registro en la tabla
         foreach($categories["categories"]["categoria"] as $category){
             Category::create([
-                "title" => $category["title"],
-                "url_clean" => $category["url_clean"]
+                "title"     => $category["Nom"],
+                "url_clean" => $category["url"]
             ]);
         }
     }

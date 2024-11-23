@@ -12,6 +12,6 @@ class Image extends Model
     // Relacions entre taules:
     public function comment()
     {
-        return $this->BelongsTo(Comment::class);
+        return $this->belongsTo(Comment::class); // N:1
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Role;
+use App\Models\Space;
+use App\Models\Comment;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -44,5 +47,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    // Relacions entre taules:
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);  // 1:N
+    }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);  // N:1
+    }
+    public function spaces()
+    {
+        return $this->hasMany(Space::class);  // 1:N
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Faker\Provider\sv_SE\Municipality;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
@@ -28,7 +29,7 @@ class UserSeeder extends Seeder
             $municipality->save();
         }
         */
-        //
+        // Usuari d'inici
         $user = new User();
         $user->name = "admin";
         $user->email = "admin@abc.com";
@@ -37,4 +38,4 @@ class UserSeeder extends Seeder
         $user->save();
     }
 }
-//$user->role_id = Role::where('name', 'admin')->first()->id; //Devuelve la id del rol de admin
+//$user->role_id = Role::where('name', 'admin')->first()->id; //Devuelve el id del rol de admin
