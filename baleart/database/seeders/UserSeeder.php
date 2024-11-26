@@ -17,14 +17,14 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([ //Crea un usuario administrador
-            "name" => "Khris",
+            "name" => "admin",
             "lastName" => "Yitan",
-            "email" => "administrador@baleart.es",
-            "email_verified_at" => now(),
+            "email" => "admin@baleart.com",
+            //"email_verified_at" => now(), //Atributos de laravel para API
             "phone" => "971123456",
-            "password" => Hash::make('admin1234'),
+            "password" => Hash::make('12345678'),
             "role_id" => Role::where("name", "administrador")->value("id"),
-            'remember_token' => Str::random(10)
+            //'remember_token' => Str::random(10)
         ]);
         // Des d'un arxiu JSON
         $jsonData = file_get_contents("C:\\temp\\baleart\\usuaris.json"); //Obtiene el contenido del archivo JSON
@@ -36,11 +36,11 @@ class UserSeeder extends Seeder
                 "name"     => $usuari["nom"],
                 "lastName" => $usuari["llinatges"],
                 "email"    => $usuari["email"],
-                "email_verified_at" => now(),
+                //"email_verified_at" => now(),
                 "phone"    => $usuari["telefon"],
                 "password" => Hash::make($usuari["password"]),
                 "role_id"  => Role::where("name", "gestor")->value("id"),
-                "remember_token" => Str::random(10)
+                //"remember_token" => Str::random(10)
             ]);
         }
     }

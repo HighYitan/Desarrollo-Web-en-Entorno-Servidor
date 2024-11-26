@@ -27,6 +27,7 @@ class CommentSeeder extends Seeder
                     y por tanto no hace falta añadirlo aquí ya que el valor seguirá siendo "N" de No aceptado hasta que el administrador lo acepte
                     entonces saldrá "Y" en la base de datos.
                 */
+                "status" => ["N", "Y"][array_rand(["N", "Y"])],
                 "space_id" => Space::where("regNumber", $comentari["espai"])->value("id"),
                 "user_id" => User::where("email", $comentari["usuari"])->value("id")
             ]);
