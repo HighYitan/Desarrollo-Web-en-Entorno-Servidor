@@ -15,18 +15,20 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('regNumber', 10)->unique();
-            $table->string('observation_CA', 5000);
-            $table->string('observation_ES', 5000);
-            $table->string('observation_EN', 5000);
+            $table->string('observation_CA', 5000)->nullable();
+            $table->string('observation_ES', 5000)->nullable();
+            $table->string('observation_EN', 5000)->nullable();
             $table->string('email', 100);
-            $table->string("phone", 100)->nullable();
-            $table->string("website", 100)->nullable();
+            $table->string("phone", 100);
+            $table->string("website", 100);
             $table->string("accessType", 1);
-            /*  3 digitos en total, 2 decimales
-                utilizo default(0) en ambos para inicializar totalScore y countScore a 0 para hacer el cálculo de la media con el trigger
-                del Model Comment al insertar un comentario en el Seeder y así no tener que insertar totalScore y countScore en el Seeder a 0.*/
-            $table->decimal('totalScore', 20, 2)->default(0);
-            $table->bigInteger('countScore')->default(0);
+            /*  
+            20 digitos en total, 2 decimales
+            utilizo default(0) en ambos para inicializar totalScore y countScore a 0 para hacer el cálculo de la media con el trigger
+            de la migracion Comment al insertar un comentario en el Seeder y así no tener que insertar totalScore y countScore en el SpaceSeeder a 0.
+            */
+            $table->decimal('totalScore', 20, 2)->default(0); 
+            $table->bigInteger('countScore')->default(0); //Número de puntuaciones, decidimos que fuera integer en clase
             $table->foreignId('address_id')->constrained();
             $table->foreignId('space_type_id')->constrained();
             $table->foreignId('user_id')->constrained();

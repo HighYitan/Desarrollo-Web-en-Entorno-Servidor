@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             "phone" => "971123456",
             "password" => Hash::make('12345678'),
             "role_id" => Role::where("name", "administrador")->value("id"),
-            //'remember_token' => Str::random(10)
+            //'remember_token' => Str::random(10) //Atributos de laravel para API
         ]);
         // Des d'un arxiu JSON
         $jsonData = file_get_contents("C:\\temp\\baleart\\usuaris.json"); //Obtiene el contenido del archivo JSON
@@ -36,11 +36,11 @@ class UserSeeder extends Seeder
                 "name"     => $usuari["nom"],
                 "lastName" => $usuari["llinatges"],
                 "email"    => $usuari["email"],
-                //"email_verified_at" => now(),
+                //"email_verified_at" => now(), //Atributos de laravel para API
                 "phone"    => $usuari["telefon"],
                 "password" => Hash::make($usuari["password"]),
                 "role_id"  => Role::where("name", "gestor")->value("id"),
-                //"remember_token" => Str::random(10)
+                //"remember_token" => Str::random(10) //Atributos de laravel para API
             ]);
         }
     }

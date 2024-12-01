@@ -20,7 +20,7 @@ class MunicipalitySeeder extends Seeder
         foreach($municipis["municipis"]["municipi"] as $municipi){ //Recorre cada municipio
             Municipality::create([
                 "name" => $municipi["Nom"],
-                "island_id" => Island::where("name", $municipi["Illa"])->value("id")
+                "island_id" => Island::where("name", $municipi["Illa"])->value("id") //Busca el id de la isla a la que pertenece el municipio
             ]);
         }
     }

@@ -26,13 +26,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         //Seeders
-        $this->call(IslandSeeder::class); //Crea un seeder concret.
+        $this->call(IslandSeeder::class); //Llama un seeder concreto y crea las islas
 
         //JSON
         $this->call(MunicipalitySeeder::class);
         $this->call(ZoneSeeder::class);
         $this->call(RoleSeeder::class);
-        $this->call(UserSeeder::class);
+        $this->call(UserSeeder::class); //Crea el usuario administrador y luego los usuarios (gestores) del archivo JSON
         $this->call(SpaceTypeSeeder::class);
         $this->call(ServiceSeeder::class);
         $this->call(ModalitySeeder::class);

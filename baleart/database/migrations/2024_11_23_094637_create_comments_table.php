@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('comment', 5000);
             $table->decimal('score', 3, 2);
-            $table->string("status", 1)->default('N');
+            //Status es default("N") en la migración lo que significa que el comentario por defecto no ha sido aceptado por un administrador para ser publicado
+            $table->string("status", 1)->default("N");
             $table->foreignId('space_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();

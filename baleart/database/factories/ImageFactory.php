@@ -19,7 +19,7 @@ class ImageFactory extends Factory
     {
         return [
             'url' => $this->faker->imageUrl(),
-            'comment_id' => Comment::inRandomOrder()->first()->id,
+            'comment_id' => Comment::inRandomOrder()->first()->id, // Relaciona la imagen con un comentario aleatorio
         ];
     }
 }

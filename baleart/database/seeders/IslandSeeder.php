@@ -13,7 +13,7 @@ class IslandSeeder extends Seeder
      */
     public function run(): void
     {
-        $illes = [
+        $illes = [ //Array de islas
             "Mallorca",
             "Menorca",
             "Eivissa",

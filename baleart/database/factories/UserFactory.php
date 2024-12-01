@@ -31,7 +31,7 @@ class UserFactory extends Factory
             //'email_verified_at' => now(),
             'phone' => fake()->phoneNumber(),
             'password' => static::$password ??= Hash::make(Str::password()),
-            "role_id" => Role::where("name", "visitant")->value("id"),
+            "role_id" => Role::where("name", "visitant")->value("id"), //Los usuarios de factory son creados como visitantes
             //'remember_token' => Str::random(10)
         ];
     }

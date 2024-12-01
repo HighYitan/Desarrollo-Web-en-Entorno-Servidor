@@ -22,14 +22,9 @@ class CommentSeeder extends Seeder
             Comment::create([
                 "comment" => $comentari["text"],
                 "score" => $comentari["puntuacio"],
-                /*
-                    Status es default("N") en la migración lo que significa que el comentario por defecto no ha sido aceptado por un administrador
-                    y por tanto no hace falta añadirlo aquí ya que el valor seguirá siendo "N" de No aceptado hasta que el administrador lo acepte
-                    entonces saldrá "Y" en la base de datos.
-                */
-                "status" => ["N", "Y"][array_rand(["N", "Y"])],
-                "space_id" => Space::where("regNumber", $comentari["espai"])->value("id"),
-                "user_id" => User::where("email", $comentari["usuari"])->value("id")
+                "status" => ["N", "Y"][array_rand(["N", "Y"])],//Selecciona aleatoriamente entre "N" y "Y"
+                "space_id" => Space::where("regNumber", $comentari["espai"])->value("id"), //Obtiene el id del espacio buscando con el número de registro del json el espacio creado con el mismo número de registro.
+                "user_id" => User::where("email", $comentari["usuari"])->value("id") //Obtiene el id del usuario buscando con el email del json el usuario creado con el mismo email.
             ]);
         }
     }
