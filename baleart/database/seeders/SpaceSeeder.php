@@ -58,7 +58,10 @@ class SpaceSeeder extends Seeder
             $modalitats = array_map('trim', $modalitats); //Elimina los espacios en blanco de cada modalidad para que se añadan correctamente a la tabla pivot.
             $modalitatIds = [];
             foreach($modalitats as $modalitat){ //Recorre cada modalidad del array
-                $modalitatIds = Modality::where("name", $modalitat)->value("id"); //Busca el id de la modalidad en la tabla Modality y lo añade al array modalitatIds
+                $modalitatId = Modality::where("name", $modalitat)->value("id"); //Busca el id de la modalidad en la tabla Modality
+                if($modalitatId){ //Comprueba si la modalidad existe y no es null
+                    $modalitatIds[] = $modalitatId; //Lo añade al array modalitatIds
+                }
             }
             $espaiEloquent->modalities()->attach( //Añade las modalidades al espai en la tabla pivot con el método modalities del modelo Space
                 $modalitatIds, ["created_at" => now(), "updated_at" => now()] //Añade la fecha de creación y modificación también.
@@ -67,7 +70,10 @@ class SpaceSeeder extends Seeder
             $serveis = array_map('trim', $serveis); //Elimina los espacios en blanco de cada servicio para que se añadan correctamente a la tabla pivot.
             $serveiIds = [];
             foreach($serveis as $servei){ //Recorre cada servicio del array
-                $serveiIds = Service::where("name", $servei)->value("id"); //Busca el id del servicio en la tabla Service y lo añade al array serveiIds
+                $serveiId = Service::where("name", $servei)->value("id"); //Busca el id del servicio en la tabla Service
+                if($serveiId){ //Comprueba si el servicio existe y no es null
+                    $serveiIds[] = $serveiId; //Lo añade al array serveiIds
+                }
             }
             $espaiEloquent->services()->attach( //Añade los servicios al espai en la tabla pivot con el método services del modelo Space
                 $serveiIds, ["created_at" => now(), "updated_at" => now()] //Añade la fecha de creación y modificación también.
