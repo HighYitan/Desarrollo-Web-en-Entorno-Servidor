@@ -24,12 +24,20 @@ class PostController extends Controller
         // return (PostResource::collection($posts))->additional(['meta' => 'Posts mostrats correctament']);  // torna una resposta personalitzada
     }
 
+    /* 
+    public function index_per_illa(string $illa)
+    {
+        $posts = Post::where('illa', $illa)->get();
+        return response()->json($posts);
+
+    }
+    */
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        //si es id foranea hacer un where por name o por lo que sea más representativo
     }
 
     /**
