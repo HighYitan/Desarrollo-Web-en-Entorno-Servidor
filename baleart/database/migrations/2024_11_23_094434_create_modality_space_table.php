@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('modality_space', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modality_id')->constrained();
-            $table->foreignId('space_id')->constrained();
+            $table->foreignId('modality_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
+            $table->foreignId('space_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
             $table->timestamps();
         });
     }

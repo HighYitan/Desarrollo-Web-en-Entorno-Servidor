@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('email', 100);
             $table->string("phone", 100);
             $table->string("website", 100);
-            $table->string("accessType", 1);
+            $table->enum("accessType", ["s", "n", "p"])->default("n");
             /*  
             20 digitos en total, 2 decimales
             utilizo default(0) en ambos para inicializar totalScore y countScore a 0 para hacer el cálculo de la media con el trigger
@@ -29,9 +29,9 @@ return new class extends Migration
             */
             $table->decimal('totalScore', 20, 2)->default(0); 
             $table->bigInteger('countScore')->default(0); //Número de puntuaciones, decidimos que fuera integer en clase
-            $table->foreignId('address_id')->constrained();
-            $table->foreignId('space_type_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('address_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
+            $table->foreignId('space_type_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
+            $table->foreignId('user_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
             $table->timestamps();
         });
     }

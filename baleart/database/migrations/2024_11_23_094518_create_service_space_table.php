@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('service_space', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained();
-            $table->foreignId('space_id')->constrained();
+            $table->foreignId('service_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
+            $table->foreignId('space_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
             $table->timestamps();
         });
     }

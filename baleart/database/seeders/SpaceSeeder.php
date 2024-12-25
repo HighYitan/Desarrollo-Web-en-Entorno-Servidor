@@ -25,7 +25,7 @@ class SpaceSeeder extends Seeder
         $espais = json_decode($jsonData, true); //Convierte el JSON en un array
 
         foreach($espais as $espai){ //Recorre cada espai
-            Address::create([ //Decido crear los address en el seeder de espais porque así ahorro leer el mismo JSON dos veces aumentando así la eficiencia.
+            $address = Address::create([ //Decido crear los address en el seeder de espais porque así ahorro leer el mismo JSON dos veces aumentando así la eficiencia.
                 "name" => $espai["adreca"],
                 "municipality_id" => Municipality::where("name", $espai["municipi"])->value("id"), //Busca el id del municipio en la tabla Municipality y lo asigna al address en la columna municipality_id
                 "zone_id" => Zone::where("name", $espai["zona"])->value("id") //Busca el id de la zona en la tabla Zone y lo asigna al address en la columna zone_id
@@ -36,7 +36,7 @@ class SpaceSeeder extends Seeder
             else{ //Si el email del gestor que ha creado el espai no existe, se asigna al administrador como dueño del espai
                 $userId = User::where("role_id", 1)->value("id");
             }
-            Space::create([
+            $espaiEloquent = Space::create([
                 "name" => $espai["nom"],
                 "regNumber" => $espai["registre"],
                 "observation_CA" => $espai["descripcions/cat"],
@@ -45,14 +45,15 @@ class SpaceSeeder extends Seeder
                 "email" => $espai["email"],
                 "phone" => $espai["telefon"],
                 "website" => $espai["web"],
-                "accessType" => Str::charAt($espai["accessibilitat"], 0), //Extraigo el primer carácter del string porque la columna solo puede contener 1 carácter.
+                "accessType" => Str::lower(Str::charAt($espai["accessibilitat"], 0)), //Extraigo el primer carácter del string porque la columna solo puede contener 1 carácter.
                 /*"totalScore" => 0, //He añadido default(0) al Model de Space
                 "countScore" => 0,*/
-                "address_id" => Address::where("name", $espai["adreca"])->value("id"), //Busca el id del address en la tabla Address y lo asigna al espai en la columna address_id
+                //"address_id" => Address::where("name", $espai["adreca"])->value("id"), //Busca el id del address en la tabla Address y lo asigna al espai en la columna address_id
+                "address_id" => $address->id,
                 "space_type_id" => SpaceType::where("name", $espai["tipus"])->value("id"), //Busca el id del tipo de espacio en la tabla SpaceType y lo asigna al espai en la columna space_type_id
                 "user_id" => $userId //Asigna el id del usuario que ha creado el espai en la columna user_id
             ]);
-            $espaiEloquent = Space::where("regNumber", $espai["registre"])->first(); //Busca el espai que acabo de crear por número de registro único.
+            //$espaiEloquent = Space::where("regNumber", $espai["registre"])->first(); //Busca el espai que acabo de crear por número de registro único.
 
             $modalitats = explode(",", $espai["modalitats"]); //Convierte el string de modalidades en un array de modalidades separados por comas.
             $modalitats = array_map('trim', $modalitats); //Elimina los espacios en blanco de cada modalidad para que se añadan correctamente a la tabla pivot.

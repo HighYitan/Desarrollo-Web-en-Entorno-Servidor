@@ -14,9 +14,9 @@ class Address extends Model
     {
         return $this->belongsTo(Municipality::class);  // N:1
     }
-    public function spaces()
+    public function space()
     {
-        return $this->hasMany(Space::class);  // 1:N
+        return $this->hasOne(Space::class);  // 1:1
     }
     public function zone()
     {

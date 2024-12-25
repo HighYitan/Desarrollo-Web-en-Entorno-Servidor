@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,12 +18,12 @@ return new class extends Migration
             $table->string('comment', 5000);
             $table->decimal('score', 3, 2);
             //Status es default("N") en la migración lo que significa que el comentario por defecto no ha sido aceptado por un administrador para ser publicado
-            $table->string("status", 1)->default("N");
-            $table->foreignId('space_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->enum("status", ["Y", "N"])->default("N");
+            $table->foreignId('space_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
+            $table->foreignId('user_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
             $table->timestamps();
         });
-        DB::statement('
+        /*DB::statement('
             CREATE TRIGGER update_scores_after_insert
             AFTER INSERT ON comments
             FOR EACH ROW
@@ -55,7 +56,7 @@ return new class extends Migration
                     countScore = countScore - 1
                 WHERE id = OLD.space_id;
             END;
-        ');
+        ');*/
     }
 
     /**
@@ -63,9 +64,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists("update_scores_after_insert");
+        /*Schema::dropIfExists("update_scores_after_insert");
         Schema::dropIfExists("update_scores_after_update");
-        Schema::dropIfExists("update_scores_after_delete");
+        Schema::dropIfExists("update_scores_after_delete");*/
         Schema::dropIfExists('comments');
     }
 };

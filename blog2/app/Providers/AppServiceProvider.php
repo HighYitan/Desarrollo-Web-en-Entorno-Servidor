@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -22,6 +24,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::bind('post', function ($value) {
+            return is_numeric($value)
+                ? Post::findOrFail($value) // Cerca pel camp `id`
+                : Post::where('title', 'like', '%' . $value . '%')->firstOrFail(); // Cerca pel camp `title`
+        });
+        Route::bind('user', function ($value) {
+            return is_numeric($value)
+                ? User::findOrFail($value) // Cerca per 'id'
+                : User::where('email', $value)->firstOrFail(); // Cerca per 'email'
+        });
         RateLimiter::for('api', function ($request) {
             return Limit::perMinute(10);
         });

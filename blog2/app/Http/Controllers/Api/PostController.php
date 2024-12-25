@@ -61,17 +61,17 @@ class PostController extends Controller
         // Post::find($id);  // no cal fer-ho, Laravel ja ho fa de manera implícita
        
         // AFEGINT DADES AMB 'load()'
-        // $post->load('user')->load('category')->load('comments')->load('comments.images');
+        $post->load('user')->load('category')->load('comments')->load('comments.images');
 
         // AFEGINT DADES AMB 'with()'
-        $newPost = Post::with(["user","category","comments","comments.images"])->find($post->id);
+        //$newPost = Post::with(["user","category","comments","comments.images"])->find($post->id);
 
         // SELECCIÓ DEL FORMAT DE LA RESPOSTA
        
         //return response()->json($post);
         // return response()->json($newPost);
-        //return (new PostResource($post))->additional(['meta' => 'Post mostrat correctament']);
-        return (new PostResource($newPost))->additional(['meta' => 'Post mostrat correctament']);
+        return (new PostResource($post))->additional(['meta' => 'Post mostrat correctament']);
+        //return (new PostResource($newPost))->additional(['meta' => 'Post mostrat correctament']);
     }
 
     /**
