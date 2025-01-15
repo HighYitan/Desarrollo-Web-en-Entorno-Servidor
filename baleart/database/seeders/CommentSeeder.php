@@ -30,9 +30,9 @@ class CommentSeeder extends Seeder
             if ($comment->status === 'Y') { //Comprueba que el nuevo comentario insertado tiene status "Y" (Aceptado por un administrador) para sumar la puntuación al espacio
                 $space = $comment->space; //Obtiene el espacio asociado al comentario
                 $scores = $space->calculateScores(); //Calcula los scores del espacio
-                $space->totalScore = $scores['totalScore']; //Asigna el totalScore calculado al totalScore del espacio
-                $space->countScore = $scores['countScore']; //Asigna el countScore calculado al countScore del espacio
-                $space->save(); //Guarda los cambios en el espacio
+                //$space->totalScore = $scores['totalScore']; //Asigna el totalScore calculado al totalScore del espacio
+                //$space->countScore = $scores['countScore']; //Asigna el countScore calculado al countScore del espacio
+                //$space->save(); //Guarda los cambios en el espacio
             }
         }
     }

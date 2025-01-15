@@ -17,7 +17,7 @@ class ApiKeyMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $apiKey = $request->header('x-api-key'); // Obtenir la clau API de la capçalera
-        if ($apiKey === env('APP_KEY')) { // Comprovar si la clau API és vàlida
+        if ($apiKey === env('API_KEY')) { // Comprovar si la clau API és vàlida
             return $next($request);
         }
 
