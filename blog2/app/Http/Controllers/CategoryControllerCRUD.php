@@ -19,7 +19,7 @@ class CategoryControllerCRUD extends Controller
      */
     public function create()
     {
-        //
+        return view('category.create'); // Llama a la vista create.blade.php
     }
 
     /**
@@ -27,7 +27,7 @@ class CategoryControllerCRUD extends Controller
      */
     public function store(Request $request)
     {
-        //
+        echo "estoy en function store() de CategoryControllerCrud"; 
     }
 
     /**

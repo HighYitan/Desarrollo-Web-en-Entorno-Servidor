@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post</title>
 </head>
 <body>
-    <h3>Create Post</h3>
-    <?php
+    <!-- Primero comprobamos si esta pantalla es llamada por consecuencia de un error-->
     @if (count($errors->all()) === 1)
-        'Mensaje de error'
+        <h2>Tenim 1 error</h2>
     @elseif (count($errors->all()) > 1)
-        'Mensaje de error'
+        <h2>Tenim multiples errors</h2>
     @else
-        'Mensaje NO error'
+        <h2>No tenim cap error</h2> 
     @endif
-
+    
     @if ($errors->any())
       <div class="alert alert-danger">
           <ul>
@@ -25,8 +24,9 @@
           </ul>
       </div>
     @endif
-    ?>
-    
+
+     <!-- En caso contrario, mostramos el formulario, es llamada inicial -->
+    <h3>Create Post</h3>
     <form action="{{ route('postCRUD.store') }}" method="post">
         @csrf <!-- Security Token -->	
         
@@ -51,5 +51,9 @@
 
         <input type="submit" value="Crear" >
     </form>
+
+    <!-- para ver el contenido de $errors, toda la info en pantalla -->
+    @dd($errors)
+    
 </body>
 </html>

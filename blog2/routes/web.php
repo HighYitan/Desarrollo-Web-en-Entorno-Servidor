@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\CategoryControllerCRUD;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostControllerCRUD;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CategoryControllerCRUD;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -127,5 +130,17 @@ Route::get('/posts2/{user_id}', function($user_id){ // Este si muestra el primer
     $post = Post::where('user_id', $user_id)->firstOrFail();
     return $post;
 });
+
+Route::get('/perfilview/{nom}', function($nom) {
+    return view('perfil', ['nom'=>$nom]);
+}); 
+
+Route::get('/perfilusuari/{usuari}', function(User $usuari) {
+    return view('perfiluser',['user'=>$usuari]);
+}); 
+
+Route::get('/posts', [PostController::class, 'index']);
+
+Route::resource('/postCRUD', PostControllerCRUD::class);
 
 Route::resource('/categoryCRUD', CategoryControllerCRUD::class);

@@ -12,7 +12,8 @@ class GuardarPostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;  // Permet que l'usuari passi l'autorització
+        //return true;  // Permet que l'usuari passi l'autorització
+        return true; // Permitimos a cualquier usuario el formulario (pero sigue necesitando token de sesión) 
     }
 
     /**
