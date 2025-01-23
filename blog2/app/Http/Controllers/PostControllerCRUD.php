@@ -82,7 +82,8 @@ class PostControllerCRUD extends Controller
 
         $post->save(); 
 
-        return back(); // Vuelve a la página anterior 
+        //return back(); // Vuelve a la página anterior
+        return back()->with('status', 'Publicación creada correctamente'); // Vuelve a la página anterior con un mensaje informativo
  
         //dd($request); // Desgrana el $request y lo pinta en pantalla
 
