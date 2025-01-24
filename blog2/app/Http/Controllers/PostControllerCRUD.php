@@ -57,10 +57,10 @@ class PostControllerCRUD extends Controller
         // $user = DB::select('select * from users where id = :id', ['id' => 1]); 
 
         // Ejemplos con el QUERY BUILDER 
-         $user = DB::table('users')->where('role','admin')->get(); // Ejemplo con where x = y
-        // $user = DB::table('users')->where('role','!=','admin')->get(); // Ejemplo con where x != y
+        //$user = DB::table('users')->where('role','admin')->get(); // Ejemplo con where x = y
+        //$user = DB::table('users')->where('role','!=','admin')->get(); // Ejemplo con where x != y
 
-         dd($user); // Muestra el resultado del select anterior 
+        //dd($user); // Muestra el resultado del select anterior 
 
     	return view('post.create'); // Llama a la vista create.blade.php
     }
@@ -80,17 +80,19 @@ class PostControllerCRUD extends Controller
         $post->user_id = User::all()->random()->id; // Para que la FK user_id funcione, elegimos al azar
         $post->category_id = Category::all()->random()->id; // Para que la FK category_id funcione, elegimos al azar
 
-        $post->save(); 
+        $post->save();
 
-        //return back(); // Vuelve a la página anterior
-        return back()->with('status', 'Publicación creada correctamente'); // Vuelve a la página anterior con un mensaje informativo
- 
         //dd($request); // Desgrana el $request y lo pinta en pantalla
 
         // Validación de los input del formulario
         /*$request->validate([
             'title' => 'required|unique:posts|min:5|max:255',
         ]);*/
+
+        //return back(); // Vuelve a la página anterior
+        //return back()->with('status', 'Publicación creada correctamente'); // Vuelve a la página anterior con un mensaje informativo
+        //return redirect()->route('postCRUD.index')->with('status','Publicación creada correctamente');
+        return back()->with('status', '<h1>Publicación creada correctamente</h1>');
     }
 
     /**
@@ -133,6 +135,7 @@ class PostControllerCRUD extends Controller
     {
         // Eliminación del registro 
         $postCRUD->delete(); 
-        return back(); 
+        //return back();
+        return back()->with('status', 'Publicación eliminada correctamente');
     }
 }

@@ -25,6 +25,14 @@
       </div>
     @endif
 
+    <!-- Comprobamos si tenemos que mostrar un mensaje de status -->
+    <!-- el if es necesario puesto que la primera vez no tendremos status -->
+    @if (session('status'))
+        <div class="alert alert-primary role='alert'">
+            {!! session('status') !!}
+        </div>
+    @endif
+    
      <!-- En caso contrario, mostramos el formulario, es llamada inicial -->
     <h3>Create Post</h3>
     <form action="{{ route('postCRUD.store') }}" method="post">
@@ -53,7 +61,7 @@
     </form>
 
     <!-- para ver el contenido de $errors, toda la info en pantalla -->
-    @dd($errors)
+    <!--@dd($errors)-->
     
 </body>
 </html>
