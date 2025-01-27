@@ -43,7 +43,8 @@ class PostControllerCRUD extends Controller
 
         //dd($posts); // volcado del resultado
 
-        $posts = Post::all(); // Obtención de todas las publicaciones en $posts
+        //$posts = Post::all(); // Obtención de todas las publicaciones en $posts
+        $posts = Post::paginate(3); // Devuelve el resultado de 3 en 3 publicaciones
         return view('post.index',['posts' => $posts]);  // Llamada a la View pasando $posts para maquetar el resultado del SQL
     }
 

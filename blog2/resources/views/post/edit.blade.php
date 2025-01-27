@@ -10,7 +10,7 @@
     <h3>Edit Post</h3>
 
     <!-- Gestión de errores -->
-    @if ($errors->any())
+    <!--@if ($errors->any())
       <div class="alert alert-danger">
           <ul>
               @foreach ($errors->all() as $error)
@@ -18,7 +18,9 @@
               @endforeach
           </ul>
       </div>
-    @endif
+    @endif-->
+
+    @include('components.alert') <!-- Muestra la lista de errores -->
 
     <form action="{{ route('postCRUD.update', ['postCRUD' => $post->id ]) }}" method="post">
         @csrf <!-- Security Token -->	

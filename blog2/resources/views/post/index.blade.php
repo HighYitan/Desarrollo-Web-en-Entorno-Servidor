@@ -9,6 +9,9 @@
         var app = @json($posts);
         console.log(app); 
     </script>
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
@@ -28,7 +31,7 @@
         <span>{{json_encode($posts)}}</span> 
     </div>-->
 
-    <table border='1'>
+    <!--<table border='1'>
         @foreach ($posts as $post)
             <tr>
                 <td>{{ $post->id }}</td>
@@ -54,7 +57,12 @@
                 </td> 
             </tr>
         @endforeach
-    </table>
+    </table>-->
+    <!-- Se muestran los elementos en forma de Card -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 ">
+        @each('components.card-posts',$posts,'post');
+        {{ $posts->links() }} <!-- Paginación -->
+    </div>
 
 </body>
 </html>

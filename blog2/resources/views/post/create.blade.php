@@ -15,7 +15,7 @@
         <h2>No tenim cap error</h2> 
     @endif
     
-    @if ($errors->any())
+    <!--@if ($errors->any())
       <div class="alert alert-danger">
           <ul>
               @foreach ($errors->all() as $error)
@@ -23,7 +23,9 @@
               @endforeach
           </ul>
       </div>
-    @endif
+    @endif-->
+
+    @include('components.alert') <!-- Muestra la lista de errores -->
 
     <!-- Comprobamos si tenemos que mostrar un mensaje de status -->
     <!-- el if es necesario puesto que la primera vez no tendremos status -->
