@@ -58,6 +58,29 @@
             </tr>
         @endforeach
     </table>-->
+
+    <!-- Llamamos a un componente -->
+    <!-- Borrar el componente con arrobacomponent o hará conflicto incluso comentado -->
+    @php
+        $componentName = "messages";
+    @endphp
+
+    @php
+        $error = 'success';
+    @endphp
+
+    <x-dynamic-component :component="$componentName" type="{{$error}}" style="background-color: coral">
+        <x-slot name="title" >
+            <h1 class="alert-heading" >Este es el título dynamic-component</h1>
+        </x-slot>
+        <x-slot name="mayusculas">
+            Hola que tal 
+        </x-slot>
+        Este es un aviso success. Que viene de un dynamic-component
+    </x-dynamic-component>
+
+    
+    
     <!-- Se muestran los elementos en forma de Card -->
     <div class="row row-cols-1 row-cols-md-3 g-4 ">
         @each('components.card-posts',$posts,'post');

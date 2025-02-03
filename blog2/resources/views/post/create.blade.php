@@ -25,7 +25,17 @@
       </div>
     @endif-->
 
-    @include('components.alert') <!-- Muestra la lista de errores -->
+    @php 
+        $componentName = ''; 
+        if ($errors->any()) {
+            $componentName = 'alert'; 
+        } else {
+            $componentName = 'success'; 
+        }
+    @endphp 
+
+    <x-dynamic-component :component="$componentName">
+    </x-dynamic-component>
 
     <!-- Comprobamos si tenemos que mostrar un mensaje de status -->
     <!-- el if es necesario puesto que la primera vez no tendremos status -->
