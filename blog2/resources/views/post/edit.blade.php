@@ -1,51 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post</title>
-</head>
-<body>
+<x-app-layout>
 
-    <h3>Edit Post</h3>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Editar Publicación :') }}  {{ $post->title  }}
+        </h2>
+    </x-slot>
 
-    <!-- Gestión de errores -->
-    <!--@if ($errors->any())
-      <div class="alert alert-danger">
-          <ul>
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-    @endif-->
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 ">
 
-    @include('components.alert') <!-- Muestra la lista de errores -->
+                    <form action="{{ route('postCRUD.update', ['postCRUD' => $post->id ]) }}" method="post">
 
-    <form action="{{ route('postCRUD.update', ['postCRUD' => $post->id ]) }}" method="post">
-        @csrf <!-- Security Token -->	
-        @method('PUT') <!-- Cambio de method a 'PUT', en caso contrario llamaría al show -->
-        
-        <label for="title">Títol</label>
-        <input type="text" style="@error('title') border-color:RED; @enderror" value="{{$post->title}}" name="title" />
-        @error('title')
-            <div>{{$message}}</div>
-        @enderror
-      
-        <label for="url_clean">Url neta</label>
-        <input type="text" value="{{$post->url_clean}}" name="url_clean" />
-        @error('url_clean')
-            <div>{{$message}}</div>
-        @enderror
-                
-        <label for="content">Contingut</label>
-        <textarea style="@error('content') border-color:RED; @enderror" name="content" col="3" >{{$post->content}}</textarea>
-        @error('content')
-            <div>{{$message}}</div>
-        @enderror
+                        @csrf
+                        @method('PUT') 
 
-        <input type="submit" value="Update">
-    </form>
+                        <div class="mb-3">
+                            <label for="title">Títol</label>
+                            <input type="text" class="mt-1 block w-full" style="@error('title') border-color:RED; @enderror" value="{{ $post->title }}" name="title" />
+                            @error('title')
+                                <div>{{$message}}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="url_clean">Url neta</label>
+                            <input type="text" class="mt-1 block w-full" value="{{$post->url_clean}}" name="url_clean" />
+                            @error('url_clean')
+                                <div>{{$message}}</div>
+                            @enderror
+                        </div>
+                       
+                        <div class="mb-3">
+                            <label for="content">Content</label>
+                            <textarea style="@error('content') border-color:RED; @enderror" name="content" col="3" class="mt-1 block w-full">{{$post->content}}</textarea>
+                            @error('content')
+                                <div>{{$message}}</div>
+                            @enderror
+                        </div>
 
-</body>
-</html>
+                        <div>
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Actualizar</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</x-app-layout>
