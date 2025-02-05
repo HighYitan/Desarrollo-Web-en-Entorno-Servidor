@@ -53,9 +53,17 @@ class PostControllerCRUD extends Controller
      */
     public function create()
     {
-        //$categories = Category::all(); // Recuperamos las categorías para asignarlas en el create
-        $categories = Category::pluck('id','title'); // Recuperamos las categorías para asignarlas en el create
-        return view('post.create', ['categories' => $categories]); // Llama a la vista create.blade.php con Categories 
+        // Ejemplos de SQL DIRECTO
+        // $user = DB::select('select * from users');
+        // $user = DB::select('select * from users where id = :id', ['id' => 1]); 
+
+        // Ejemplos con el QUERY BUILDER 
+        //$user = DB::table('users')->where('role','admin')->get(); // Ejemplo con where x = y
+        //$user = DB::table('users')->where('role','!=','admin')->get(); // Ejemplo con where x != y
+
+        //dd($user); // Muestra el resultado del select anterior 
+
+    	return view('post.create'); // Llama a la vista create.blade.php
     }
 
     /**
@@ -63,18 +71,29 @@ class PostControllerCRUD extends Controller
      */
     public function store(GuardarPostRequest $request)
     {
+        // Si las validaciones son OK, entonces se debe proceder al insert en la DDBB
         $post = new Post; 
 
         $post->title = $request->title;
         $post->url_clean = $request->url_clean;  
         $post->content = $request->content; 
-        $post->posted = $request->posted; 
-        $post->category_id = $request->categories_id; // Añade la FK de category
+        $post->posted = 'not'; // Por defecto las publicaciones no están posteadas, requiren de supervisión
         $post->user_id = User::all()->random()->id; // Para que la FK user_id funcione, elegimos al azar
+        $post->category_id = Category::all()->random()->id; // Para que la FK category_id funcione, elegimos al azar
 
-        $post->save(); 
+        $post->save();
 
-        return redirect()->route('postCRUD.index'); 
+        //dd($request); // Desgrana el $request y lo pinta en pantalla
+
+        // Validación de los input del formulario
+        /*$request->validate([
+            'title' => 'required|unique:posts|min:5|max:255',
+        ]);*/
+
+        //return back(); // Vuelve a la página anterior
+        //return back()->with('status', 'Publicación creada correctamente'); // Vuelve a la página anterior con un mensaje informativo
+        //return redirect()->route('postCRUD.index')->with('status','Publicación creada correctamente');
+        return back()->with('status', '<h1>Publicación creada correctamente</h1>');
     }
 
     /**
@@ -85,7 +104,6 @@ class PostControllerCRUD extends Controller
         //$posts = Post::find($id); // Extrae regisro con PK = id
         //$posts = Post::findorfail($id); // Genera una respuesta http de error en caso de not found. Un 404
         //return view('post.show',['post' => $posts]);  // Recordar crear la vista
-        $cat = Category::where('id', $postCRUD->category_id);
         return view('post.show',['post' => $postCRUD]);  // Porque el nombre del parámetro es así, postCRUD/{postCRUD}
     }
 

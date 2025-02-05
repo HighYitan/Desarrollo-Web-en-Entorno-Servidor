@@ -31,6 +31,15 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="categories_id">Categories</label>
+                            <select name="categories_id" class="mt-1 block w-full">
+                            @foreach ($categories as $title => $id)
+                                <option value="{{$id}}">{{$title}}</option>
+                            @endforeach
+                            </select>
+                        </div> 
+
+                        <div class="mb-3">
                             <label for="content">Contingut</label>
                             <textarea style="@error('content') border-color:RED; @enderror" name="content" col="3" class="mt-1 block w-full"></textarea>
                             @error('content')

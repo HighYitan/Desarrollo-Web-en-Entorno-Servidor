@@ -4,6 +4,10 @@
         <h3 class="mb-2 text-xl font-medium leading-tight">{{ $post->url_clean }}</h3>
         <p class="mb-4 text-base">{{ $post->content }}</p>
         <p class="mb-4 text-sm">posted: {{ $post->posted }}</p>
+        @if ($post->category)
+            <h3 class="mb-2 text-xl font-medium leading-tight">{{ $post->category->title }}</h3>
+        @endif
+        <p class="mb-4 text-sm">user: {{$post->user->name}}</p>
         <p class="mb-4 text-sm">created at: {{ $post->created_at }}</p>
         <p class="mb-4 text-sm">updated at: {{ $post->updated_at }}</p>
         <a href="{{route('postCRUD.show' , ['postCRUD' => $post->id])}}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Show</a>
