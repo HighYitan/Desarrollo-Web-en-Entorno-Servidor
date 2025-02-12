@@ -26,7 +26,7 @@ class GuardarPostRequest extends FormRequest
         return [
             'title' => ['required','unique:posts','min:5','max:255', new Uppercase],
             'url_clean' => 'required|unique:posts|min:5|max:255',
-            'content' => 'required|min:5|max:255',
+            'content' => 'required|min:5|max:500',
         ];
     }
     /*public function messages()
@@ -51,7 +51,7 @@ class GuardarPostRequest extends FormRequest
             'url_clean.max' => 'La url máximo son 255 caracters',
             'content.required' => 'El content debe estar informada',
             'content.min' => 'El content mínimo son 5 carateres',
-            'content.max' => 'El content máximo son 255 caracters',
+            'content.max' => 'El content máximo son 500 caracters',
         ]; 
     }
 }

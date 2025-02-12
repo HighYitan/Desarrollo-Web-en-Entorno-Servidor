@@ -31,13 +31,40 @@
                                 <div>{{$message}}</div>
                             @enderror
                         </div>
-                       
+
                         <div class="mb-3">
                             <label for="content">Content</label>
-                            <textarea style="@error('content') border-color:RED; @enderror" name="content" col="3" class="mt-1 block w-full">{{$post->content}}</textarea>
+                            <textarea name="content" minlength="5" maxlength="500" style="@error('content') border-color:RED; @enderror" rows="5" class="mt-1 block w-full">{{$post->content}}</textarea>
                             @error('content')
                                 <div>{{$message}}</div>
                             @enderror
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="category_id">Categories</label>
+                            <select name="category_id" class="mt-1 block w-full">
+                                @foreach ($categories as $title => $id)
+                                    @if ($post->category_id == $id)
+                                        <option selected value="{{$id}}">{{$title}}</option>                                       
+                                    @else
+                                        <option value="{{$id}}">{{$title}}</option>  
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="posted" class="form-label">Publicat</label>
+                            <select name="posted" class="mt-1 block w-full">
+                                @if ($post->posted == 'yes')
+                                    <option selected value="yes">Si</option>
+                                    <option value="not">No</option>
+                                @else
+                                    <option value="yes">Si</option>
+                                    <option selected value="not">No</option>
+                                @endif
+                            </select>
                         </div>
 
                         <div>

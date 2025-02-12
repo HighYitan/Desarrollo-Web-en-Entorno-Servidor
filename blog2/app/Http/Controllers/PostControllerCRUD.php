@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\GuardarPostRequest;
 use App\Http\Requests\ActualizarPostRequest;
 
@@ -44,8 +45,12 @@ class PostControllerCRUD extends Controller
         //dd($posts); // volcado del resultado
 
         //$posts = Post::all(); // Obtención de todas las publicaciones en $posts
-        $posts = Post::paginate(3); // Devuelve el resultado de 3 en 3 publicaciones
-        return view('post.index',['posts' => $posts]);  // Llamada a la View pasando $posts para maquetar el resultado del SQL
+        
+        //$posts = Post::paginate(3); // Devuelve el resultado de 3 en 3 publicaciones
+        //return view('post.index',['posts' => $posts]);  // Llamada a la View pasando $posts para maquetar el resultado del SQL
+
+        $posts = Post::orderBy('created_at','DESC')->paginate(3); // Obtención publicaciones orden fecha creación y paginación
+        return view('post.index',['posts' => $posts]);  // Llamada a la View pasando $posts en 'posts' para maquetar el resultado
     }
 
     /**
@@ -70,7 +75,8 @@ class PostControllerCRUD extends Controller
         $post->content = $request->content; 
         $post->posted = $request->posted; 
         $post->category_id = $request->categories_id; // Añade la FK de category
-        $post->user_id = User::all()->random()->id; // Para que la FK user_id funcione, elegimos al azar
+        //$post->user_id = User::all()->random()->id; // Para que la FK user_id funcione, elegimos al azar
+        $post->user_id = Auth::user()->id;  // Obtiene el usuario logineado 
 
         $post->save(); 
 
@@ -94,7 +100,10 @@ class PostControllerCRUD extends Controller
      */
     public function edit(Post $postCRUD)
     {
-        return view('post.edit',['post' => $postCRUD]); // Llama a la vista post.edit
+        //return view('post.edit',['post' => $postCRUD]); // Llama a la vista post.edit
+
+        $categories = Category::pluck('id','title'); // Recuperamos las categorías, solamente los campos que nos interesan 
+        return view('post.edit',['post' => $postCRUD,'categories' => $categories]); // Hay que crear la vista edit
     }
 
     /**
