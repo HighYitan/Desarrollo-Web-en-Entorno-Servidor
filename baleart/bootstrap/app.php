@@ -31,7 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Aplicar middleware específic per a API
         $middleware->api("throttle:api"); // Limitar peticions a API
         //$middleware->api("auth:sanctum");
-        $middleware->api("ApiKeyMiddleware"); // Middleware personalitzat que maneja API Key y Token sanctum
+        //$middleware->api("ApiKeyMiddleware"); // Middleware personalitzat que maneja API Key y Token sanctum
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Manejar excepcions per a rutes API
