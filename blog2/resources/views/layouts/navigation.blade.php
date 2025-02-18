@@ -21,9 +21,17 @@
                         {{ __('Publicaciones') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('postCRUD.create')" :active="request()->routeIs('postCRUD.create')">
+                        {{ __('Publicación [Nueva]') }}
+                    </x-nav-link>
+
                     <!-- Links para Categorias -->
                     <x-nav-link :href="route('categoryCRUD.index')" :active="request()->routeIs('categoryCRUD.index')">
                         {{ __('Categorias') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('categoryCRUD.create')" :active="request()->routeIs('categoryCRUD.create')">
+                        {{ __('Categoría [Nueva]') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -81,13 +89,29 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('postCRUD.index')" :active="request()->routeIs('postCRUD.index')">
-                {{ __('Publicaciones') }}
-            </x-responsive-nav-link>
-            
-            <x-responsive-nav-link :href="route('categoryCRUD.index')" :active="request()->routeIs('categoryCRUD.index')">
-                {{ __('Categorias') }}
-            </x-responsive-nav-link>
+            <!-- Links Responsivos para Publicaciones -->
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('postCRUD.index')" :active="request()->routeIs('postCRUD.index')">
+                    {{ __('Publicaciones') }}
+                </x-responsive-nav-link>
+            </div>
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('postCRUD.create')" :active="request()->routeIs('postCRUD.create')">
+                    {{ __('Publicación [Nueva]') }}
+                </x-responsive-nav-link>
+            </div>
+    
+            <!-- Links Responsivos para Categorías -->
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('categoryCRUD.index')" :active="request()->routeIs('categoryCRUD.index')">
+                    {{ __('Categorias') }}
+                </x-responsive-nav-link>
+            </div>
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('categoryCRUD.create')" :active="request()->routeIs('categoryCRUD.create')">
+                    {{ __('Categoría [Nueva]') }}
+                </x-responsive-nav-link>
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
