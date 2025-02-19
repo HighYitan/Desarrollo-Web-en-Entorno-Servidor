@@ -15,7 +15,7 @@ class GuardarCommentRequest extends FormRequest
     public function authorize(): bool
     {   
         $email = $this->input('email'); // Obtenim el valor del camp email
-        if (Auth::check()) { // Comprovem si hi ha un usuari autenticat
+        if (Auth::guard('sanctum')->check()) { // Comprovem si hi ha un usuari autenticat
             return true;
         }
         else if($email) { // Si no hi ha cap usuari autenticat, comprovem si l'email existeix.

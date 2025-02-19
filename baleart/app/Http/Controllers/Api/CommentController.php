@@ -37,7 +37,7 @@ class CommentController extends Controller
     public function store(GuardarCommentRequest $request, Space $space)
     {
         $createdComments = [];
-        $userId = Auth::id(); // Obtenir l'ID de l'usuari autenticat
+        $userId = Auth::guard('sanctum')->id(); // Obtenir l'ID de l'usuari autenticat
         if (!$userId) { // Si no hi ha usuari autenticat
             $user = User::where('email', $request->input('email'))->first(); // Busca l'usuari pel correu del JSON insertat
             if ($user) { // Si l'usuari existeix
