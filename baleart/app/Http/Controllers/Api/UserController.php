@@ -45,13 +45,21 @@ class UserController extends Controller
      */
     public function update(GuardarUserRequest $request, User $user)
     {
-        $user->update([
+        //!is_null($request->validated());
+
+        $request = [ // Crea un array amb les dades del request mapejades amb els camps de la taula
             'name' => $request->nom,
             'lastName' => $request->cognom,
             'email' => $request->email,
             'phone' => $request->telèfon,
             'password' => $request->contrasenya,
-        ]);
+        ];
+
+        $request = array_filter($request, function ($value) { // Elimina els valors nuls del request
+            return !is_null($value);
+        });
+
+        $user->update($request); // Actualitza les dades de l'usuari
 
         return (new UserResource($user))->additional(['meta' => 'Usuari modificat correctament']);
     }
