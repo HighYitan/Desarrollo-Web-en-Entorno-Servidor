@@ -56,13 +56,6 @@ class UserController extends Controller
         return (new UserResource($user))->additional(['meta' => 'Usuari modificat correctament']);
     }
 
-    /*public function update(GuardarUserRequest $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $user->update($request->validated());
-
-        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
-    }*/
     /**
      * Remove the specified resource from storage.
      */
