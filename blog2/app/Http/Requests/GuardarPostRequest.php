@@ -24,8 +24,8 @@ class GuardarPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required','unique:posts','min:5','max:255', new Uppercase],
-            'url_clean' => 'required|unique:posts|min:5|max:255',
+            'title' => ['required','unique:posts,title,' . $this->post->id,'min:5','max:255', new Uppercase],
+            'url_clean' => 'required|unique:posts,url_clean,' . $this->post->id . '|min:5|max:255',
             'content' => 'required|min:5|max:500',
         ];
     }

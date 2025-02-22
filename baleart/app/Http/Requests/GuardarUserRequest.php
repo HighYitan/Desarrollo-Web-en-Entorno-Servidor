@@ -25,7 +25,7 @@ class GuardarUserRequest extends FormRequest
         return [
             'nom'         => 'nullable|string|max:100|min:2', //Los nombres más cortos son de 2 letras
             'cognom'      => 'nullable|string|max:100|min:2',
-            'email'       => 'nullable|string|email|max:100|min:6|unique:users|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/',
+            'email'       => 'nullable|string|email|max:100|min:6|unique:users,email,' . $this->user->id . '|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/',
             'telèfon'     => 'nullable|string|max:100|min:7',//Es el número de teléfono más corto del mundo, 7 dígitos
             'contrasenya' => 'nullable|string|max:100|min:6|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*?&]/',
         ];
