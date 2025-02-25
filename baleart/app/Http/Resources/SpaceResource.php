@@ -34,7 +34,7 @@ class SpaceResource extends JsonResource
             "email" => $this->email,
             "www" => $this->website,
             "accessibilitat" => $this->transformAccessType($this->accessType),
-            "puntuacióMitjana" => $request->when($this->countScore > 0, function () { // Solo muestra la media si countScore es mayor que 0
+            "puntuacióMitjana" => $this->when(($this->countScore > 0), function () { // Solo muestra la media si countScore es mayor que 0
                 return $this->totalScore / $this->countScore;
             }), // Calcula la media solo si countScore es mayor que 0, si no hay scores no lo muestra
             "modalitats" => $this->modalities->pluck('name')->implode(', '), // Joinea con comas los nombres de las modalidades de la colección
