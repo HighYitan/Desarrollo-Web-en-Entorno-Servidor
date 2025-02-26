@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         });
         
         RateLimiter::for('api', function ($request) {
-            return Limit::perMinute(50); // Limita a 10 peticions per minut
+            return Limit::perMinute(50); // Limita a 50 peticions per minut
         });
         Route::pattern('id', '[0-9]+'); // El paràmetre 'id' només pot ser numèric
     }
