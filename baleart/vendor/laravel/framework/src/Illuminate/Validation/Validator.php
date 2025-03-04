@@ -266,6 +266,8 @@ class Validator implements ValidatorContract
         'PresentWithAll',
         'Prohibited',
         'ProhibitedIf',
+        'ProhibitedIfAccepted',
+        'ProhibitedIfDeclined',
         'ProhibitedUnless',
         'Prohibits',
         'MissingIf',
@@ -1225,7 +1227,7 @@ class Validator implements ValidatorContract
         // of the explicit rules needed for the given data. For example the rule
         // names.* would get expanded to names.0, names.1, etc. for this data.
         $response = (new ValidationRuleParser($this->data))
-                            ->explode(ValidationRuleParser::filterConditionalRules($rules, $this->data));
+            ->explode(ValidationRuleParser::filterConditionalRules($rules, $this->data));
 
         $this->rules = array_merge_recursive(
             $this->rules, $response->rules

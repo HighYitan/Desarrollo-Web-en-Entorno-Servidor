@@ -37,7 +37,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        return back()->with('status', 'Usuario creado correctamente'); // Vuelve a la página anterior con un mensaje informativo
     }
 
     /**

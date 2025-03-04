@@ -27,6 +27,7 @@ class Space extends Model
         "phone",
         "website",
         "accessType",
+        'totalScore',
         "address_id",
         "space_type_id",
         "user_id",
@@ -34,7 +35,7 @@ class Space extends Model
 
     protected $guarded = [
         'id',
-        'totalScore',
+        //'totalScore',
         'countScore',
         'created_at',
         'updated_at',

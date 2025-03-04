@@ -15,6 +15,7 @@ class Comment extends Model
         'score',
         'space_id',
         'user_id',
+        'status'
     ];
 
     // Atributs que no es volen mostrar amb 'response()->json($posts)'
@@ -25,7 +26,7 @@ class Comment extends Model
     // Atributs que no es poden emplenar de manera automàtica
     protected $guarded = [
         'id',
-        "status"
+        //"status"
     ];
 
     // Relacions entre taules:
